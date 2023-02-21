@@ -1,7 +1,8 @@
 import { extendTheme, Theme } from "@chakra-ui/react";
 
-import { BrandsColors, colors } from "./colors";
 import { styles } from "./styles";
+import { BrandsColors, colors } from "./colors";
+import { fonts } from "./fonts";
 import { fontSizes, BrandFontSizes } from "./foundations/fontSizes";
 
 type BrandOwnProps = {
@@ -15,6 +16,7 @@ export type BrandTheme = BrandOwnProps &
 const overrides = {
   styles,
   colors,
+  fonts,
   fontSizes,
 };
 

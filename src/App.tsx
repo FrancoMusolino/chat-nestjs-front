@@ -3,6 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ChakraProvider } from "@chakra-ui/react";
 import { RouterProvider } from "react-router-dom";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/700.css";
 
 import customTheme from "./theme";
 import { router } from "./routes/router";

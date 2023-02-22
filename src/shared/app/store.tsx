@@ -45,3 +45,7 @@ export const GlobalStoreProvider = ({
 export const useGlobalStore = () => ({ state: useContext(GlobalStore).state })
 
 export const useGlobalDispatch = () => useContext(GlobalStore).dispatch
+
+export const useStoreSelector = <T extends keyof InitialStateType>(
+  select: T
+): InitialStateType[T] => useContext(GlobalStore).state[select]

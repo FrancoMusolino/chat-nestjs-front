@@ -1,8 +1,8 @@
 import React from 'react'
-import { useGlobalStore } from '../shared/app/store'
+import { useStoreSelector } from '../shared/app/store'
 
 export const Username = () => {
-  const { state } = useGlobalStore()
+  const { username } = useStoreSelector('session')
 
-  return <div>{state.session.username}</div>
+  return <div>{username}</div>
 }

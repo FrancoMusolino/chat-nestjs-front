@@ -32,6 +32,7 @@ export const InputFloatingLabel = ({
           variant='floating'
           id={label.toLowerCase()}
           isInvalid={Boolean(errors[name] && touched[name])}
+          h='60px'
         >
           <Input type={type} placeholder=' ' {...field} />
           <FormLabel>{label}</FormLabel>

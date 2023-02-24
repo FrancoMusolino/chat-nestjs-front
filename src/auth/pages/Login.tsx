@@ -7,7 +7,6 @@ import { Presentation } from '../components/Presentation'
 import { InputFloatingLabel } from '../components/InputFloatingLabel'
 import { Question } from '../components/Question'
 import { SubmitButton } from '../components/SubmitButton'
-import { ERROR_MESSAGES, PASSWORD_REGEXP } from '@/shared/constants'
 
 const initialValues = {
   username: '',
@@ -15,18 +14,11 @@ const initialValues = {
 }
 
 const validationSchema = Yup.object({
-  username: Yup.string()
-    .trim()
-    .min(3, 'Mínimo 3 caracteres')
-    .max(15, 'Máximo 15 caracteres')
-    .required('Campo requerido'),
-  password: Yup.string()
-    .trim()
-    .matches(PASSWORD_REGEXP, ERROR_MESSAGES.INVALID_PASSWORD)
-    .required('Campo requerido'),
+  username: Yup.string().trim().required('Campo requerido'),
+  password: Yup.string().trim().required('Campo requerido'),
 })
 
-export const Register = () => {
+export const Login = () => {
   return (
     <Formik
       initialValues={initialValues}
@@ -40,8 +32,8 @@ export const Register = () => {
         <Form>
           <Stack h='100vh' justify='center' align='center' spacing={12}>
             <Presentation
-              title='Crea tu cuenta'
-              description='Crea una cuenta en CHAT APP'
+              title='Iniciar sesión'
+              description='Ingresa a tu cuenta de CHAT APP'
             />
 
             <Stack spacing={6} w={286}>
@@ -59,12 +51,12 @@ export const Register = () => {
                 dirty={dirty}
                 errors={errors}
               >
-                Crear
+                Ingresar
               </SubmitButton>
               <Question
-                question='Ya tienes cuenta?'
-                linkTxt='Iniciar sesión'
-                to='../login'
+                question='No tienes cuenta?'
+                linkTxt='Regístrate'
+                to='../registro'
               />
             </Stack>
           </Stack>

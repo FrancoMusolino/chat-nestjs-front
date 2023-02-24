@@ -12,6 +12,7 @@ import { Root } from './root'
 // PAGES
 
 import { Register } from '../auth/pages/Register'
+import { Login } from '@/auth/pages/Login'
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,7 +23,7 @@ export const router = createBrowserRouter(
       <Route path='auth'>
         <Route index element={<Navigate to='registro' replace />} />
         <Route path='registro' element={<Register />} />
-        <Route path='login' element={<h1>Login</h1>} />
+        <Route path='login' element={<Login />} />
       </Route>
     </>
   )

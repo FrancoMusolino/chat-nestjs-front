@@ -18,7 +18,7 @@ export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path='/' element={<Root />}>
-        <Route index />
+        <Route index element={<h1>Home</h1>} />
       </Route>
       <Route path='auth'>
         <Route index element={<Navigate to='registro' replace />} />

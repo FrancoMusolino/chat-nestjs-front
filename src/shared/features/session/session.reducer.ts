@@ -18,7 +18,7 @@ const sessionInitialState: SessionState = {
 
 type UpdateAction = {
   type: typeof START_SESSION
-  payload: SessionState
+  payload: Omit<SessionState, 'session'>
 }
 
 type ResetAction = {
@@ -32,7 +32,7 @@ const sessionReducer = (state: SessionState, action: SessionAction) => {
 
   switch (type) {
     case START_SESSION:
-      return { ...state, ...action.payload }
+      return { ...state, ...action.payload, session: true }
 
     case END_SESSION:
       return sessionInitialState

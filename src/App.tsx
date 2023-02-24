@@ -21,7 +21,18 @@ const reducer = combineReducers({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ChakraProvider resetCSS={true} theme={customTheme}>
+      <ChakraProvider
+        resetCSS={true}
+        theme={customTheme}
+        toastOptions={{
+          defaultOptions: {
+            position: 'top-right',
+            isClosable: true,
+            duration: 2500,
+            variant: 'subtle',
+          },
+        }}
+      >
         <GlobalStoreProvider initialState={initialState} reducer={reducer}>
           <RouterProvider router={router} />
         </GlobalStoreProvider>

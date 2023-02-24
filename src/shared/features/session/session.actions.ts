@@ -3,7 +3,6 @@ import { START_SESSION, END_SESSION } from './session.actionTypes'
 type StartSessionPayload = {
   id: string
   username: string
-  session: boolean
   token: string
 }
 

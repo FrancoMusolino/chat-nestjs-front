@@ -1,6 +1,7 @@
+import { decrypt, encrypt } from '@/shared/helpers'
 import { ReducerType } from '../../types'
 
-import { END_SESSION, START_SESSION } from './session.actionTypes'
+import { END_SESSION, REHYDRATE, START_SESSION } from './session.actionTypes'
 
 type SessionState = {
   id: string
@@ -22,7 +23,7 @@ type UpdateAction = {
 }
 
 type ResetAction = {
-  type: typeof END_SESSION
+  type: typeof END_SESSION | typeof REHYDRATE
 }
 
 export type SessionAction = UpdateAction | ResetAction
@@ -31,8 +32,26 @@ const sessionReducer = (state: SessionState, action: SessionAction) => {
   const { type } = action
 
   switch (type) {
-    case START_SESSION:
-      return { ...state, ...action.payload, session: true }
+    case REHYDRATE: {
+      const storage = window.localStorage.getItem(session.reducerPath)
+
+      if (storage) {
+        const decryptedStorage = decrypt(storage)
+
+        return { ...state, ...decryptedStorage }
+      }
+
+      return state
+    }
+
+    case START_SESSION: {
+      const newSession = { ...action.payload, session: true }
+
+      const encryptedStorage = encrypt(newSession)
+      window.localStorage.setItem(session.reducerPath, encryptedStorage)
+
+      return { ...state, ...newSession }
+    }
 
     case END_SESSION:
       return sessionInitialState

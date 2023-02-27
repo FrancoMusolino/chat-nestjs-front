@@ -8,10 +8,11 @@ import {
 // ROUTES CONTAINERS
 
 import { Root } from './root'
+import { Auth } from './auth'
 
 // PAGES
 
-import { Register } from '../auth/pages/Register'
+import { Register } from '@/auth/pages/Register'
 import { Login } from '@/auth/pages/Login'
 
 export const router = createBrowserRouter(
@@ -20,7 +21,7 @@ export const router = createBrowserRouter(
       <Route path='/' element={<Root />}>
         <Route index element={<h1>Home</h1>} />
       </Route>
-      <Route path='auth'>
+      <Route path='auth' element={<Auth />}>
         <Route index element={<Navigate to='registro' replace />} />
         <Route path='registro' element={<Register />} />
         <Route path='login' element={<Login />} />

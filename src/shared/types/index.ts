@@ -6,10 +6,11 @@ export type ReducerType<T, E> = {
 
 export type MyError = {
   message: string
-  status: number
+  statusCode: number
+  error: string
 }
 
-export type RegisterResponse = {
+export type UserWithToken = {
   id: string
   username: string
   status: string
@@ -23,3 +24,7 @@ export type RegisterResponse = {
   chatIDs: string[]
   token: string
 }
+
+export type RegisterResponse = UserWithToken
+
+export type LoginResponse = UserWithToken

@@ -21,6 +21,8 @@ const initialValues = {
   password: '',
 }
 
+type ValuesType = typeof initialValues
+
 const validationSchema = Yup.object({
   username: Yup.string()
     .trim()
@@ -33,7 +35,7 @@ const validationSchema = Yup.object({
     .required('Campo requerido'),
 })
 
-const register = (newUser: typeof initialValues) =>
+const register = (newUser: ValuesType) =>
   axios.post<RegisterResponse>('auth/register', newUser)
 
 export const Register = () => {
@@ -47,7 +49,7 @@ export const Register = () => {
 
   useErrorMessage(error)
 
-  const handleSubmit = (values: typeof initialValues) => {
+  const handleSubmit = (values: ValuesType) => {
     return mutate(values, {
       onSuccess: (newUser) => {
         const { id, username, token } = newUser.data

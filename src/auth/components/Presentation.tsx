@@ -1,7 +1,7 @@
 import React from 'react'
-import { Heading, Stack, Text, useTheme } from '@chakra-ui/react'
+import { Heading, Stack, Text } from '@chakra-ui/react'
 
-import { BrandTheme } from '@/theme'
+import { useBrandTheme } from '@/shared/hooks'
 
 type PresentationProps = {
   title: string
@@ -9,7 +9,7 @@ type PresentationProps = {
 }
 
 export const Presentation = ({ title, description }: PresentationProps) => {
-  const { colors } = useTheme<BrandTheme>()
+  const { colors } = useBrandTheme()
 
   return (
     <Stack spacing={0} textAlign='center'>

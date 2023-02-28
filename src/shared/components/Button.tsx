@@ -3,11 +3,10 @@ import {
   Button as ChakraButton,
   ButtonProps as ButtonChakraProps,
   StyleProps,
-  useTheme,
 } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 
-import { BrandTheme } from '@/theme'
+import { useBrandTheme } from '../hooks'
 
 type ButtonProps = StyleProps &
   ButtonChakraProps & {
@@ -15,7 +14,7 @@ type ButtonProps = StyleProps &
   }
 
 export const Button = ({ children, ...rest }: ButtonProps) => {
-  const { colors } = useTheme<BrandTheme>()
+  const { colors } = useBrandTheme()
 
   return (
     <ChakraButton

@@ -6,6 +6,7 @@ import { END_SESSION, REHYDRATE, START_SESSION } from './session.actionTypes'
 type SessionState = {
   id: string
   username: string
+  profilePicture?: string
   token: string
   session: boolean
 }
@@ -13,6 +14,7 @@ type SessionState = {
 const sessionInitialState: SessionState = {
   id: '',
   username: '',
+  profilePicture: '',
   token: '',
   session: false,
 }

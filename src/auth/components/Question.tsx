@@ -1,8 +1,8 @@
 import React from 'react'
-import { Text, useTheme } from '@chakra-ui/react'
+import { Text } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 
-import { BrandTheme } from '@/theme'
+import { useBrandTheme } from '@/shared/hooks'
 
 type QuestionProps = {
   question: string
@@ -11,7 +11,7 @@ type QuestionProps = {
 }
 
 export const Question = ({ question, to, linkTxt }: QuestionProps) => {
-  const { colors } = useTheme<BrandTheme>()
+  const { colors } = useBrandTheme()
 
   const navigate = useNavigate()
 

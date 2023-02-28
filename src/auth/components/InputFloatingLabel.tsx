@@ -4,11 +4,10 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
-  useTheme,
 } from '@chakra-ui/react'
 import { Field, FieldProps } from 'formik'
 
-import { BrandTheme } from '@/theme'
+import { useBrandTheme } from '@/shared/hooks'
 
 type InputFloatingLabelProps = {
   name: string
@@ -23,7 +22,7 @@ export const InputFloatingLabel = ({
   label,
   type = 'text',
 }: InputFloatingLabelProps) => {
-  const { colors } = useTheme<BrandTheme>()
+  const { colors } = useBrandTheme()
 
   return (
     <Field name={name}>

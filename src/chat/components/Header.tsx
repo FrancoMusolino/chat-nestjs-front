@@ -1,10 +1,12 @@
 import React from 'react'
-import { Heading, HStack } from '@chakra-ui/react'
-import { FaEllipsisV } from 'react-icons/fa'
+import { Heading, HStack, MenuItem } from '@chakra-ui/react'
 
+import { CreateChatModal } from './CreateChatModal'
 import { Avatar } from '@/shared/components/Avatar'
+import { Menu } from '@/shared/components/Menu'
 import { useStoreSelector } from '@/shared/app/store'
 import { useBrandTheme } from '@/shared/hooks'
+import { Alert } from '@/shared/components/Alert'
 
 export const Header = () => {
   const { colors } = useBrandTheme()
@@ -24,7 +26,16 @@ export const Header = () => {
         <Avatar src={profilePicture} />
         <Heading fontSize='xl'>{username}</Heading>
       </HStack>
-      <FaEllipsisV fill={colors.brand['text-gray']} cursor='pointer' />
+      <Menu>
+        <MenuItem>Configuración</MenuItem>
+        <CreateChatModal />
+        <Alert
+          trigger={MenuItem}
+          triggerText='Cerrar sesión'
+          alertTitle='¿Deseas cerrar tú sesión?'
+          btnText='Cerrar sesión'
+        />
+      </Menu>
     </HStack>
   )
 }

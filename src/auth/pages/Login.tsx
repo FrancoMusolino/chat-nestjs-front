@@ -1,6 +1,5 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
 import { Stack } from '@chakra-ui/react'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
@@ -11,42 +10,33 @@ import { Question } from '../components/Question'
 import { SubmitButton } from '../components/SubmitButton'
 
 import { useGlobalDispatch } from '@/shared/app/store'
-import { axios } from '@/shared/services/axios'
 import { useErrorMessage } from '@/shared/hooks'
-import { LoginResponse } from '@/shared/types'
 import { startSession } from '@/shared/features/session/session.actions'
+import { AuthRequest, useLoginMutation } from '../services/auth.service'
 
-const initialValues = {
+const initialValues: AuthRequest = {
   username: '',
   password: '',
 }
-
-type ValuesType = typeof initialValues
 
 const validationSchema = Yup.object({
   username: Yup.string().trim().required('Campo requerido'),
   password: Yup.string().trim().required('Campo requerido'),
 })
 
-const login = (user: ValuesType) =>
-  axios.post<LoginResponse>('auth/login', user)
-
 export const Login = () => {
   const navigate = useNavigate()
   const dispatch = useGlobalDispatch()
 
-  const { mutate, error, isLoading } = useMutation({
-    mutationKey: ['login'],
-    mutationFn: login,
-  })
+  const { mutate, error, isLoading } = useLoginMutation()
 
   useErrorMessage(error)
 
-  const handleSubmit = (values: ValuesType) => {
+  const handleSubmit = (values: AuthRequest) => {
     return mutate(values, {
       onSuccess: (user) => {
-        const { id, username, token } = user.data
-        dispatch(startSession({ id, username, token }))
+        const { id, username, token, profilePicture } = user.data
+        dispatch(startSession({ id, username, token, profilePicture }))
         return navigate('/', { replace: true })
       },
     })

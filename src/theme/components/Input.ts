@@ -23,5 +23,29 @@ export const Input = {
         },
       },
     },
+    outline: {
+      field: {
+        paddingInline: '16px',
+        paddingBlock: '6px',
+        color: 'brand.text-gray',
+        fontSize: 'md',
+        border: '2px solid #869694',
+        borderRadius: '12px',
+        _focus: {
+          borderColor: 'none',
+        },
+        _placeholder: {
+          color: 'brand.text-gray',
+        },
+        _focusVisible: {
+          borderColor: 'none',
+          boxShadow: 'none',
+        },
+        _invalid: {
+          border: '1px solid #F15C6D',
+          boxShadow: 'none',
+        },
+      },
+    },
   },
 }

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { HStack, Skeleton, Stack, Text } from '@chakra-ui/react'
+import React from 'react'
+import { HStack, Stack, Text } from '@chakra-ui/react'
 
 import { useBrandTheme } from '@/shared/hooks'
 import { Avatar } from '@/shared/components/Avatar'
@@ -30,18 +30,34 @@ export const ChatItem = ({
 
   return (
     <HStack align='center' spacing={3} cursor='pointer'>
-      <Avatar src={avatar || ''} />
+      <Avatar src={avatar || ''} isGroupPicture />
       <HStack
         flexGrow={1}
-        paddingBlock={4}
-        borderTop={`1px solid ${colors.brand.secondary}`}
         justify='space-between'
+        paddingBlock={4}
+        overflow='hidden'
+        borderTop={`1px solid ${colors.brand.secondary}`}
       >
-        <Stack spacing={1}>
-          <Text fontSize='lg' lineHeight={1}>
+        <Stack flexGrow={1} spacing={1} overflow='hidden'>
+          <Text
+            fontSize='lg'
+            lineHeight={1}
+            width='95%'
+            whiteSpace='nowrap'
+            overflow='hidden'
+            textOverflow='ellipsis'
+          >
             {title}
           </Text>
-          <Text fontSize='xs' lineHeight={1} color={colors.brand['text-gray']}>
+          <Text
+            width='95%'
+            whiteSpace='nowrap'
+            overflow='hidden'
+            textOverflow='ellipsis'
+            fontSize='xs'
+            lineHeight={1}
+            color={colors.brand['text-gray']}
+          >
             {content || 'Empieza a enviar mensajes al chat!!'}
           </Text>
         </Stack>
@@ -54,8 +70,3 @@ export const ChatItem = ({
     </HStack>
   )
 }
-
-//TODO
-
-// Ver que pasa si el mensaje / titulo es mas largo
-// Loader chat items

@@ -1,12 +1,14 @@
 import React from 'react'
 import { Heading, HStack, MenuItem } from '@chakra-ui/react'
 
-import { CreateChatModal } from './CreateChatModal'
+import { CreateChat } from './CreateChat'
+
 import { Avatar } from '@/shared/components/Avatar'
 import { Menu } from '@/shared/components/Menu'
 import { useStoreSelector } from '@/shared/app/store'
 import { useBrandTheme } from '@/shared/hooks'
 import { Alert } from '@/shared/components/Alert'
+import { Modal } from '@/shared/components/Modal'
 
 export const Header = () => {
   const { colors } = useBrandTheme()
@@ -28,7 +30,13 @@ export const Header = () => {
       </HStack>
       <Menu>
         <MenuItem>Configuración</MenuItem>
-        <CreateChatModal />
+        <Modal
+          trigger={MenuItem}
+          triggerText='Nuevo Grupo'
+          modalTitle='Crear Chat'
+        >
+          <CreateChat />
+        </Modal>
         <Alert
           trigger={MenuItem}
           triggerText='Cerrar sesión'

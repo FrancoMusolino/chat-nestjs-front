@@ -41,6 +41,10 @@ export const Input = {
           borderColor: 'none',
           boxShadow: 'none',
         },
+        _invalid: {
+          border: '1px solid #F15C6D',
+          boxShadow: 'none',
+        },
       },
     },
   },

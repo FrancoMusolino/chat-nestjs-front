@@ -1,4 +1,5 @@
 import { FunctionComponent, ReactNode } from 'react'
+import { useFormikContext } from 'formik'
 import {
   ButtonProps as ChakraButtonProps,
   HStack,
@@ -18,8 +19,7 @@ import { Button, ButtonProps } from './Button'
 type ModalProps = {
   children: ReactNode
   trigger: FunctionComponent<ChakraButtonProps>
-  cta: FunctionComponent<ButtonProps>
-  ctaProps: ButtonProps
+
   triggerText: string
   modalTitle: string
 }
@@ -29,8 +29,6 @@ export const Modal = ({
   trigger: Trigger,
   triggerText,
   modalTitle,
-  cta: Cta,
-  ctaProps,
 }: ModalProps) => {
   const { colors } = useBrandTheme()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -39,12 +37,16 @@ export const Modal = ({
     <>
       <Trigger onClick={onOpen}>{triggerText}</Trigger>
 
-      <ChakraModal isOpen={isOpen} onClose={onClose}>
+      <ChakraModal
+        isOpen={isOpen}
+        onClose={onClose}
+        autoFocus={false}
+        isCentered
+      >
         <ModalOverlay />
         <ModalContent
           bgColor={colors.brand.secondary}
           borderRadius={15}
-          alignSelf='center'
           userSelect='none'
         >
           <HStack as={ModalHeader} align='center' justify='space-between'>
@@ -57,19 +59,6 @@ export const Modal = ({
           </HStack>
 
           {children}
-
-          <HStack w='full' as={ModalFooter}>
-            <Button
-              btnType='cancel'
-              minW='200px'
-              fontSize='md'
-              fontWeight={500}
-              onClick={onClose}
-            >
-              Cancelar
-            </Button>
-            <Cta {...ctaProps} onClick={onClose} />
-          </HStack>
         </ModalContent>
       </ChakraModal>
     </>

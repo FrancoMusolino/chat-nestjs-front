@@ -1,33 +1,30 @@
 import React, { HTMLInputTypeAttribute } from 'react'
-import { FormControl, FormLabel, Input } from '@chakra-ui/react'
+import { FormControl, Input } from '@chakra-ui/react'
 import { Field, FieldProps } from 'formik'
 
 import { FormErrorMsg } from '@/shared/components/FormErrorMsg'
 
-type InputFloatingLabelProps = {
+type OutlineInputProps = {
   name: string
-  label: string
+  placeholder: string
 
   /**@default text */
   type?: HTMLInputTypeAttribute
 }
 
-export const InputFloatingLabel = ({
+export const OutlineInput = ({
   name,
-  label,
+  placeholder,
   type = 'text',
-}: InputFloatingLabelProps) => {
+}: OutlineInputProps) => {
   return (
     <Field name={name}>
-      {({ field, form: { errors, touched } }: FieldProps) => (
+      {({ field, form: { touched, errors } }: FieldProps) => (
         <FormControl
-          variant='floating'
-          id={label.toLowerCase()}
+          h='65px'
           isInvalid={Boolean(errors[name] && touched[name])}
-          h='60px'
         >
-          <Input type={type} placeholder=' ' {...field} />
-          <FormLabel>{label}</FormLabel>
+          <Input type={type} placeholder={placeholder} w='full' {...field} />
           <FormErrorMsg>{String(errors[name])}</FormErrorMsg>
         </FormControl>
       )}

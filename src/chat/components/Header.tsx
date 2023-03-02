@@ -5,15 +5,17 @@ import { CreateChat } from './CreateChat'
 
 import { Avatar } from '@/shared/components/Avatar'
 import { Menu } from '@/shared/components/Menu'
-import { useStoreSelector } from '@/shared/app/store'
+import { useGlobalDispatch, useStoreSelector } from '@/shared/app/store'
 import { useBrandTheme } from '@/shared/hooks'
 import { Alert } from '@/shared/components/Alert'
 import { Modal } from '@/shared/components/Modal'
+import { endSession } from '@/shared/features/session/session.actions'
 
 export const Header = () => {
   const { colors } = useBrandTheme()
 
   const { username, profilePicture } = useStoreSelector('session')
+  const dispatch = useGlobalDispatch()
 
   return (
     <HStack
@@ -42,6 +44,7 @@ export const Header = () => {
           triggerText='Cerrar sesión'
           alertTitle='¿Deseas cerrar tú sesión?'
           btnText='Cerrar sesión'
+          action={() => dispatch(endSession())}
         />
       </Menu>
     </HStack>

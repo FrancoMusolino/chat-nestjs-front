@@ -17,6 +17,7 @@ export const TextareaInput = ({ name, placeholder }: TextareaInputProps) => {
         <FormControl isInvalid={Boolean(errors[name] && touched[name])}>
           <TextareaInputWithScroll
             as='textarea'
+            variant='unstyled'
             w='full'
             h='140px'
             placeholder={placeholder}

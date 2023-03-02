@@ -55,8 +55,11 @@ const sessionReducer = (state: SessionState, action: SessionAction) => {
       return { ...state, ...newSession }
     }
 
-    case END_SESSION:
+    case END_SESSION: {
+      window.localStorage.removeItem(session.reducerPath)
+
       return sessionInitialState
+    }
 
     default:
       return state

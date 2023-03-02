@@ -16,7 +16,7 @@ export const Question = ({ question, to, linkTxt }: QuestionProps) => {
   const navigate = useNavigate()
 
   return (
-    <Text fontSize='sm' color={colors.brand['text-gray']}>
+    <Text fontSize='sm' color={colors.brand['text-gray']} userSelect='none'>
       {question}{' '}
       <Text
         as='span'

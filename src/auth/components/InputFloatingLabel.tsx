@@ -26,7 +26,7 @@ export const InputFloatingLabel = ({
           isInvalid={Boolean(errors[name] && touched[name])}
           h='60px'
         >
-          <Input type={type} placeholder=' ' {...field} />
+          <Input w='full' type={type} placeholder=' ' {...field} />
           <FormLabel>{label}</FormLabel>
           <FormErrorMsg>{String(errors[name])}</FormErrorMsg>
         </FormControl>

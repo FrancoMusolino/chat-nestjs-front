@@ -23,13 +23,13 @@ export const Input = {
         },
       },
     },
-    outline: {
+    unstyled: {
       field: {
         paddingInline: '16px',
         paddingBlock: '6px',
         color: 'brand.text-gray',
         fontSize: 'md',
-        border: '2px solid #869694',
+        border: '1px solid #869694',
         borderRadius: '12px',
         _focus: {
           borderColor: 'none',

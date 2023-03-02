@@ -3,7 +3,7 @@ import { ReducerType } from '../../types'
 
 import { END_SESSION, REHYDRATE, START_SESSION } from './session.actionTypes'
 
-type SessionState = {
+export type SessionState = {
   id: string
   username: string
   profilePicture?: string

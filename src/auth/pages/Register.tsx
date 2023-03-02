@@ -1,6 +1,5 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
 import { Stack } from '@chakra-ui/react'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
@@ -9,19 +8,17 @@ import { Presentation } from '../components/Presentation'
 import { InputFloatingLabel } from '../components/InputFloatingLabel'
 import { Question } from '../components/Question'
 import { SubmitButton } from '../components/SubmitButton'
+import { AuthRequest, useRegisterMutation } from '../services/auth.service'
+
 import { ERROR_MESSAGES, PASSWORD_REGEXP } from '@/shared/constants'
-import { axios } from '@/shared/services/axios'
 import { useErrorMessage } from '@/shared/hooks'
-import { RegisterResponse } from '@/shared/types'
 import { useGlobalDispatch } from '@/shared/app/store'
 import { startSession } from '@/shared/features/session/session.actions'
 
-const initialValues = {
+const initialValues: AuthRequest = {
   username: '',
   password: '',
 }
-
-type ValuesType = typeof initialValues
 
 const validationSchema = Yup.object({
   username: Yup.string()
@@ -35,21 +32,15 @@ const validationSchema = Yup.object({
     .required('Campo requerido'),
 })
 
-const register = (newUser: ValuesType) =>
-  axios.post<RegisterResponse>('auth/register', newUser)
-
 export const Register = () => {
   const navigate = useNavigate()
   const dispatch = useGlobalDispatch()
 
-  const { mutate, error, isLoading } = useMutation({
-    mutationKey: ['register'],
-    mutationFn: register,
-  })
+  const { mutate, error, isLoading } = useRegisterMutation()
 
   useErrorMessage(error)
 
-  const handleSubmit = (values: ValuesType) => {
+  const handleSubmit = (values: AuthRequest) => {
     return mutate(values, {
       onSuccess: (newUser) => {
         const { id, username, token } = newUser.data

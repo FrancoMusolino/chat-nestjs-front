@@ -24,7 +24,13 @@ export const OutlineInput = ({
           h='65px'
           isInvalid={Boolean(errors[name] && touched[name])}
         >
-          <Input type={type} placeholder={placeholder} w='full' {...field} />
+          <Input
+            variant='unstyled'
+            type={type}
+            placeholder={placeholder}
+            w='full'
+            {...field}
+          />
           <FormErrorMsg>{String(errors[name])}</FormErrorMsg>
         </FormControl>
       )}

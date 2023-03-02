@@ -20,6 +20,8 @@ type AlertProps = {
 
   /**@default Aceptar */
   btnText?: string
+
+  action?: () => void
 }
 
 export const Alert = ({
@@ -27,6 +29,7 @@ export const Alert = ({
   triggerText,
   alertTitle,
   btnText = 'Aceptar',
+  action,
 }: AlertProps) => {
   const { colors } = useBrandTheme()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -70,7 +73,14 @@ export const Alert = ({
                 minW='200px'
                 fontSize='md'
                 fontWeight={500}
-                onClick={onClose}
+                onClick={
+                  action
+                    ? () => {
+                        action()
+                        onClose()
+                      }
+                    : onClose
+                }
               >
                 {btnText}
               </Button>

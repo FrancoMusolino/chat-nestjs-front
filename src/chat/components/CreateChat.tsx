@@ -11,14 +11,18 @@ import * as Yup from 'yup'
 
 import { OutlineInput } from './OutlineInput'
 import { TextareaInput } from './TextareaInput'
-import { Button } from '@/shared/components/Button'
+import {
+  CreateChatRequest,
+  useCreateChatMutation,
+} from '../services/chat.service'
 
-const initialValues = {
+import { Button } from '@/shared/components/Button'
+import { useErrorMessage } from '@/shared/hooks'
+
+const initialValues: CreateChatRequest = {
   title: '',
   description: '',
 }
-
-type ValuesType = typeof initialValues
 
 const validationSchema = Yup.object({
   title: Yup.string()
@@ -31,11 +35,24 @@ const validationSchema = Yup.object({
 export const CreateChat = () => {
   const { onClose } = useModalContext()
 
+  const { mutateAsync, isLoading, error } = useCreateChatMutation()
+
+  useErrorMessage(error)
+
+  const handleSubmit = async (newChat: CreateChatRequest) => {
+    try {
+      await mutateAsync(newChat)
+      onClose()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={(values) => console.log({ values })}
+      onSubmit={handleSubmit}
     >
       {({ dirty, errors }) => (
         <Form>
@@ -62,8 +79,8 @@ export const CreateChat = () => {
               minW='200px'
               fontSize='md'
               fontWeight={500}
+              isLoading={isLoading}
               isDisabled={Boolean(...(Object.values(errors) || !dirty))}
-              onClick={onClose}
             >
               Crear Chat
             </Button>

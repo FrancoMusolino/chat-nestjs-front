@@ -29,7 +29,13 @@ export const ChatItem = ({
   }
 
   return (
-    <HStack align='center' spacing={3} cursor='pointer'>
+    <HStack
+      align='center'
+      paddingInline={3}
+      spacing={3}
+      cursor='pointer'
+      _hover={{ bgColor: colors.brand.secondary }}
+    >
       <Avatar src={avatar || ''} isGroupPicture />
       <HStack
         flexGrow={1}

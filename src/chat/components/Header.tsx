@@ -10,9 +10,12 @@ import { useBrandTheme } from '@/shared/hooks'
 import { Alert } from '@/shared/components/Alert'
 import { Modal } from '@/shared/components/Modal'
 import { endSession } from '@/shared/features/session/session.actions'
+import { useQueryClient } from '@tanstack/react-query'
 
 export const Header = () => {
   const { colors } = useBrandTheme()
+
+  const queryClient = useQueryClient()
 
   const { username, profilePicture } = useStoreSelector('session')
   const dispatch = useGlobalDispatch()
@@ -44,7 +47,10 @@ export const Header = () => {
           triggerText='Cerrar sesión'
           alertTitle='¿Deseas cerrar tú sesión?'
           btnText='Cerrar sesión'
-          action={() => dispatch(endSession())}
+          action={() => {
+            dispatch(endSession())
+            queryClient.clear()
+          }}
         />
       </Menu>
     </HStack>

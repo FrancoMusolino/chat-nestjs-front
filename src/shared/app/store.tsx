@@ -9,10 +9,11 @@ import {
 
 import { InitialStateType } from './rootReducer'
 import { SessionAction } from '../features/session/session.reducer'
+import { ChatAction } from '../features/chat/chat.reducer'
 
 type GlobalStoreType = {
   state: InitialStateType
-  dispatch: Dispatch<SessionAction>
+  dispatch: Dispatch<SessionAction | ChatAction>
 }
 
 export const GlobalStore = createContext({} as GlobalStoreType)

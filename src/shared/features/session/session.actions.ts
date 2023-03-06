@@ -4,6 +4,7 @@ type StartSessionPayload = {
   id: string
   username: string
   profilePicture?: string
+  status: string
   token: string
 }
 

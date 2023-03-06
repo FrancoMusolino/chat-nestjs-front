@@ -12,6 +12,7 @@ export const RootLayout = () => {
       my={{ base: 0, '2xl': 4 }}
       p={0}
       boxShadow='dark-lg'
+      overflow='hidden'
     >
       <Sidebar />
       <Box flexGrow={1}>

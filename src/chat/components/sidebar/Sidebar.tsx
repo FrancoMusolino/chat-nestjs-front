@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box } from '@chakra-ui/react'
 
-import { Header } from '../Header'
+import { ProfileHeader } from './ProfileHeader'
 import { Search } from './Search'
 import { ChatList } from './ChatList'
 
@@ -14,11 +14,11 @@ export const Sidebar = () => {
     <Box
       minW='330px'
       maxW='30%'
-      h='100vh'
+      h={{ base: '100vh', '2xl': 'calc(100vh - 2rem)' }}
       flex='0 0 30%'
       borderRight={`1px solid ${colors.brand.secondary}`}
     >
-      <Header />
+      <ProfileHeader />
       <Search />
       <ChatList />
     </Box>

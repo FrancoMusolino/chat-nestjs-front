@@ -6,7 +6,13 @@ import { Sidebar } from '@/chat/components/sidebar/Sidebar'
 
 export const RootLayout = () => {
   return (
-    <Container maxW='1440px' display='flex'>
+    <Container
+      display='flex'
+      maxW='1440px'
+      my={{ base: 0, '2xl': 4 }}
+      p={0}
+      boxShadow='dark-lg'
+    >
       <Sidebar />
       <Box flexGrow={1}>
         <Outlet />

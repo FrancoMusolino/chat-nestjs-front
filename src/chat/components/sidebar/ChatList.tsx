@@ -29,10 +29,9 @@ export const ChatList = () => {
 
   return (
     <SectionWithScroll
-      maxH='calc(100vh - 75px - 70px)'
+      maxH='calc(100% - 75px - 70px)'
       spacing={0}
       borderBottom={`1px solid ${colors.brand.secondary}`}
-      overflowY='scroll'
     >
       {isLoading ? (
         <ChatItemLoader />

@@ -47,5 +47,12 @@ export const Input = {
         },
       },
     },
+    flushed: {
+      field: {
+        _focus: {
+          borderColor: 'inherit',
+        },
+      },
+    },
   },
 }

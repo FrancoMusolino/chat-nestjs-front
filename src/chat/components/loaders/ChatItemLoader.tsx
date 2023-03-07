@@ -5,7 +5,7 @@ import { generateArrayWithRandomKeys } from '@/shared/utils'
 
 export const ChatItemLoader = () => {
   return (
-    <Stack spacing={3}>
+    <Stack spacing={3} px={3}>
       {generateArrayWithRandomKeys(5).map((i) => (
         <Skeleton key={i} h='50px' borderRadius={10}>
           ChatItemLoader

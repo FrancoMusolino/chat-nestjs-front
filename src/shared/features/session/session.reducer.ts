@@ -7,6 +7,7 @@ export type SessionState = {
   id: string
   username: string
   profilePicture?: string
+  status: string
   token: string
   session: boolean
 }
@@ -15,6 +16,7 @@ const sessionInitialState: SessionState = {
   id: '',
   username: '',
   profilePicture: '',
+  status: '',
   token: '',
   session: false,
 }

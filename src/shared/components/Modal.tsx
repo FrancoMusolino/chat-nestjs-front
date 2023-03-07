@@ -1,11 +1,8 @@
 import { FunctionComponent, ReactNode } from 'react'
-import { useFormikContext } from 'formik'
 import {
-  ButtonProps as ChakraButtonProps,
   HStack,
   Modal as ChakraModal,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Text,
@@ -14,19 +11,20 @@ import {
 import { IoCloseCircleOutline } from 'react-icons/io5'
 
 import { useBrandTheme } from '../hooks'
-import { Button, ButtonProps } from './Button'
+import { ButtonProps } from './Button'
 
 type ModalProps = {
   children: ReactNode
-  trigger: FunctionComponent<ChakraButtonProps>
-
+  trigger: FunctionComponent<ButtonProps>
   triggerText: string
+  triggerProps?: ButtonProps
   modalTitle: string
 }
 
 export const Modal = ({
   children,
   trigger: Trigger,
+  triggerProps,
   triggerText,
   modalTitle,
 }: ModalProps) => {
@@ -35,7 +33,9 @@ export const Modal = ({
 
   return (
     <>
-      <Trigger onClick={onOpen}>{triggerText}</Trigger>
+      <Trigger {...triggerProps} onClick={onOpen}>
+        {triggerText}
+      </Trigger>
 
       <ChakraModal
         isOpen={isOpen}
@@ -49,7 +49,7 @@ export const Modal = ({
           borderRadius={15}
           userSelect='none'
         >
-          <HStack as={ModalHeader} align='center' justify='space-between'>
+          <HStack as={ModalHeader} align='flex-start' justify='space-between'>
             <Text fontWeight={400}>{modalTitle}</Text>
             <IoCloseCircleOutline
               fontSize={24}

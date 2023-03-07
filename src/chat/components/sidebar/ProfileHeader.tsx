@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Heading, HStack, MenuItem } from '@chakra-ui/react'
 
@@ -12,7 +12,11 @@ import { Alert } from '@/shared/components/Alert'
 import { Modal } from '@/shared/components/Modal'
 import { endSession } from '@/shared/features/session/session.actions'
 
-export const ProfileHeader = () => {
+type ProfileHeaderProps = {
+  setIsOpen: Dispatch<SetStateAction<boolean>>
+}
+
+export const ProfileHeader = ({ setIsOpen }: ProfileHeaderProps) => {
   const queryClient = useQueryClient()
 
   const { username, profilePicture } = useStoreSelector('session')
@@ -25,7 +29,7 @@ export const ProfileHeader = () => {
         <Heading fontSize='xl'>{username}</Heading>
       </HStack>
       <Menu>
-        <MenuItem>Configuración</MenuItem>
+        <MenuItem onClick={() => setIsOpen(true)}>Configuración</MenuItem>
         <Modal
           trigger={MenuItem}
           triggerText='Nuevo Grupo'

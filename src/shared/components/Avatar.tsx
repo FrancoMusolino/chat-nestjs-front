@@ -9,9 +9,6 @@ type AvatarProps = StyleProps &
   ChakraAvatarProps & {
     /**@default false */
     isGroupPicture?: boolean
-
-    /**@default false */
-    isEditable?: boolean
   }
 
 export const Avatar = ({

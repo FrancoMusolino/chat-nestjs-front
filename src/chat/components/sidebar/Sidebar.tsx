@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box } from '@chakra-ui/react'
 
 import { ProfileHeader } from './ProfileHeader'
@@ -12,6 +12,8 @@ import { AnimatePresence } from 'framer-motion'
 export const Sidebar = () => {
   const { colors } = useBrandTheme()
 
+  const [isOpen, setIsOpen] = useState(false)
+
   return (
     <Box
       pos='relative'
@@ -21,10 +23,10 @@ export const Sidebar = () => {
       flex='0 0 30%'
       borderRight={`1px solid ${colors.brand.secondary}`}
     >
-      <AnimatePresence>
-        <ConfigurationPanel />
+      <AnimatePresence presenceAffectsLayout={false}>
+        {isOpen && <ConfigurationPanel setIsOpen={setIsOpen} />}
       </AnimatePresence>
-      <ProfileHeader />
+      <ProfileHeader setIsOpen={setIsOpen} />
       <Search />
       <ChatList />
     </Box>

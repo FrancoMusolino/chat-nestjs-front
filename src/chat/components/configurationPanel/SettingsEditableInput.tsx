@@ -11,41 +11,55 @@ import {
 
 import { useBrandTheme } from '@/shared/hooks'
 
-type SettingsEditableInputProps = EditableProps
+type SettingsEditableInputProps = EditableProps & { label: string }
 
 const MAX_LENGTH = 55
 
 export const SettingsEditableInput = ({
   defaultValue,
+  label,
   ...props
 }: SettingsEditableInputProps) => {
   const { colors } = useBrandTheme()
 
-  const [chars, setChars] = useState(defaultValue?.length || 0)
+  const initialCharsState = defaultValue?.length || 0
+
+  const [chars, setChars] = useState(initialCharsState)
+  const [value, setValue] = useState(defaultValue)
   const [visible, setVisible] = useState(false)
 
   const hadleSubmit = (nextValue: string) => {
     setVisible(false)
+
+    if (!nextValue) {
+      setValue(defaultValue)
+      setChars(initialCharsState)
+      return
+    }
   }
 
   return (
     <Stack spacing={0}>
       <Text fontSize='sm' color={colors.brand.primary}>
-        Tu estado
+        {label}
       </Text>
       <HStack w='full' align='flex-end' spacing={3}>
         <Editable
-          defaultValue={defaultValue}
+          value={value}
           borderBottom='1px solid'
           borderColor={colors.brand.secondary}
           w='92%'
+          overflow='hidden'
           _focusWithin={{
             borderColor: colors.brand.primary,
           }}
           selectAllOnFocus={false}
           onEdit={() => setVisible(true)}
           onSubmit={hadleSubmit}
-          onChange={(nextValue) => setChars(nextValue.length)}
+          onChange={(nextValue) => {
+            setValue(nextValue)
+            setChars(nextValue.length)
+          }}
           {...props}
         >
           <EditablePreview />

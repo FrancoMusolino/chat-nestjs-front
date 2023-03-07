@@ -6,7 +6,7 @@ import { ChatItemLoader } from '../loaders/ChatItemLoader'
 
 import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
 import { SectionWithScroll } from '@/shared/components/SectionWithScroll'
-import { useGetUserChats } from '@/chat/services/chat.service'
+import { useGetUserChats } from '@/shared/services/user.service'
 import { useStoreSelector } from '@/shared/app/store'
 
 export const ChatList = () => {

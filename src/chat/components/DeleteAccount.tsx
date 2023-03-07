@@ -13,9 +13,15 @@ import { FaLock } from 'react-icons/fa'
 import { OutlineInput } from './OutlineInput'
 
 import { Button } from '@/shared/components/Button'
-import { useBrandTheme } from '@/shared/hooks'
+import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
+import {
+  DeleteAccountRequest,
+  useDeleteAccountMutation,
+} from '@/shared/services/user.service'
+import { useGlobalDispatch, useStoreSelector } from '@/shared/app/store'
+import { endSession } from '@/shared/features/session/session.actions'
 
-const initialValues = {
+const initialValues: DeleteAccountRequest = {
   password: '',
 }
 
@@ -27,8 +33,19 @@ export const DeleteAccount = () => {
   const { colors } = useBrandTheme()
   const { onClose } = useModalContext()
 
-  const handleSubmit = () => {
-    console.log('hola')
+  const { id } = useStoreSelector('session')
+  const dispatch = useGlobalDispatch()
+
+  const { mutate, isLoading, error } = useDeleteAccountMutation(id)
+  useErrorMessage(error)
+
+  const handleSubmit = (data: DeleteAccountRequest) => {
+    return mutate(data, {
+      onSuccess: () => {
+        dispatch(endSession())
+        onClose()
+      },
+    })
   }
 
   return (
@@ -65,7 +82,7 @@ export const DeleteAccount = () => {
               minW='200px'
               fontSize='md'
               fontWeight={500}
-              // isLoading={isLoading}
+              isLoading={isLoading}
               isDisabled={Boolean(...(Object.values(errors) || !dirty))}
             >
               Eliminar cuenta

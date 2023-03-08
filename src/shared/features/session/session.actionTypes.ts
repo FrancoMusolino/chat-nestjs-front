@@ -1,3 +1,4 @@
 export const START_SESSION = 'START_SESSION'
+export const UPDATE_SESSION = 'UPDATE_SESSION'
 export const END_SESSION = 'END_SESSION'
 export const REHYDRATE = 'REHYDRATE'

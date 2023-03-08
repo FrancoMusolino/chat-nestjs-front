@@ -10,38 +10,58 @@ import {
 } from '@chakra-ui/react'
 
 import { useBrandTheme } from '@/shared/hooks'
+import { useUpdateUserMutation } from '@/shared/services/user.service'
+import { useGlobalDispatch, useStoreSelector } from '@/shared/app/store'
+import { updateSession } from '@/shared/features/session/session.actions'
 
-type SettingsEditableInputProps = EditableProps & { label: string }
+type SettingsEditableInputProps = EditableProps
 
 const MAX_LENGTH = 55
 
 export const SettingsEditableInput = ({
-  defaultValue,
-  label,
   ...props
 }: SettingsEditableInputProps) => {
   const { colors } = useBrandTheme()
 
-  const initialCharsState = defaultValue?.length || 0
+  const { id, status } = useStoreSelector('session')
+  const dispatch = useGlobalDispatch()
+
+  const initialCharsState = status.length
 
   const [chars, setChars] = useState(initialCharsState)
-  const [value, setValue] = useState(defaultValue)
+  const [value, setValue] = useState(status)
   const [visible, setVisible] = useState(false)
+
+  const { mutate } = useUpdateUserMutation(id)
+
+  const handleChange = (nextValue: string) => {
+    setValue(nextValue)
+    setChars(nextValue.length)
+  }
 
   const hadleSubmit = (nextValue: string) => {
     setVisible(false)
 
     if (!nextValue) {
-      setValue(defaultValue)
+      setValue(status)
       setChars(initialCharsState)
       return
     }
+
+    return mutate(
+      { status: nextValue },
+      {
+        onSuccess: () => {
+          dispatch(updateSession({ status: nextValue }))
+        },
+      }
+    )
   }
 
   return (
     <Stack spacing={0}>
       <Text fontSize='sm' color={colors.brand.primary}>
-        {label}
+        Tu estado
       </Text>
       <HStack w='full' align='flex-end' spacing={3}>
         <Editable
@@ -56,10 +76,7 @@ export const SettingsEditableInput = ({
           selectAllOnFocus={false}
           onEdit={() => setVisible(true)}
           onSubmit={hadleSubmit}
-          onChange={(nextValue) => {
-            setValue(nextValue)
-            setChars(nextValue.length)
-          }}
+          onChange={handleChange}
           {...props}
         >
           <EditablePreview />

@@ -9,7 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 
-import { useBrandTheme } from '@/shared/hooks'
+import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
 import { useUpdateUserMutation } from '@/shared/services/user.service'
 import { useGlobalDispatch, useStoreSelector } from '@/shared/app/store'
 import { updateSession } from '@/shared/features/session/session.actions'
@@ -32,7 +32,8 @@ export const SettingsEditableInput = ({
   const [value, setValue] = useState(status)
   const [visible, setVisible] = useState(false)
 
-  const { mutate } = useUpdateUserMutation(id)
+  const { mutate, error } = useUpdateUserMutation(id)
+  useErrorMessage(error)
 
   const handleChange = (nextValue: string) => {
     setValue(nextValue)

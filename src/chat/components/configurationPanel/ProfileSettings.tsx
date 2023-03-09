@@ -17,7 +17,7 @@ export const ProfileSettings = () => {
     <Stack spacing={10} py={10} px={5}>
       <ChangeProfilePicture />
       <SettingsInput label='Tu username' isReadOnly value={username} />
-      <SettingsEditableInput label='Tu estado' defaultValue={status} />
+      <SettingsEditableInput />
       <Modal
         modalTitle='Eliminar cuenta (está acción es irreversible)'
         trigger={Button}

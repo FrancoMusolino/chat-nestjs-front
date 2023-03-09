@@ -1,14 +1,79 @@
-import React, { useState } from 'react'
-import { Avatar } from '@/shared/components/Avatar'
+import React, { useState, useEffect } from 'react'
 import { Box, Stack, Text } from '@chakra-ui/react'
 import { BsCameraFill } from 'react-icons/bs'
 
-import { useStoreSelector } from '@/shared/app/store'
+import { Avatar } from '@/shared/components/Avatar'
+import { useGlobalDispatch, useStoreSelector } from '@/shared/app/store'
+import { updateSession } from '@/shared/features/session/session.actions'
+import { useUpdateUserMutation } from '@/shared/services/user.service'
+import { useErrorMessage } from '@/shared/hooks'
+import { CLOUDINARY_WIDGET_DEFAULT_OPTIONS } from '@/shared/constants'
+
+let cloudinary: any
+let widget: any
 
 export const ChangeProfilePicture = () => {
   const [isVisible, setIsVisible] = useState(false)
 
-  const { profilePicture } = useStoreSelector('session')
+  const { id, profilePicture } = useStoreSelector('session')
+  const dispatch = useGlobalDispatch()
+
+  const { mutate, error } = useUpdateUserMutation(id)
+  useErrorMessage(error)
+
+  useEffect(() => {
+    if (!cloudinary) {
+      cloudinary = (window as any).cloudinary
+    }
+
+    const onIdle = () => {
+      if (!widget) {
+        widget = createWidget()
+      }
+    }
+
+    const canIUseRIC = 'requestIdleCallback' in window
+
+    const idleCallback = canIUseRIC
+      ? requestIdleCallback(onIdle)
+      : setTimeout(onIdle, 1)
+
+    return () => {
+      canIUseRIC
+        ? cancelIdleCallback(idleCallback as number)
+        : clearTimeout(idleCallback)
+    }
+  }, [])
+
+  const createWidget = () => {
+    const options = {
+      ...CLOUDINARY_WIDGET_DEFAULT_OPTIONS,
+      uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET_USERS,
+    }
+
+    return cloudinary?.createUploadWidget(options, (error: any, res: any) => {
+      if (res.event && res.event === 'success') {
+        const profilePicture = res.info.secure_url
+
+        return mutate(
+          { profilePicture },
+          {
+            onSuccess: () => {
+              dispatch(updateSession({ profilePicture }))
+            },
+          }
+        )
+      }
+    })
+  }
+
+  const open = () => {
+    if (!widget) {
+      widget = createWidget()
+    }
+
+    widget && widget.open()
+  }
 
   return (
     <Box
@@ -18,6 +83,7 @@ export const ChangeProfilePicture = () => {
       alignSelf='center'
       borderRadius='full'
       cursor='pointer'
+      onClick={open}
       onMouseEnter={() => setIsVisible(true)}
       onMouseLeave={() => setIsVisible(false)}
     >

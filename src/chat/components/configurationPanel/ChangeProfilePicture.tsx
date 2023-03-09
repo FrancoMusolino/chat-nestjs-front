@@ -53,7 +53,6 @@ export const ChangeProfilePicture = () => {
 
     return cloudinary?.createUploadWidget(options, (error: any, res: any) => {
       if (res.event && res.event === 'success') {
-        setIsVisible(false)
         const profilePicture = res.info.secure_url
 
         return mutate(

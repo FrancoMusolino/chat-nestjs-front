@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Stack, Text } from '@chakra-ui/react'
+import { Box, Spinner, Stack, Text } from '@chakra-ui/react'
 import { BsCameraFill } from 'react-icons/bs'
 
 import { Avatar } from '@/shared/components/Avatar'
@@ -18,7 +18,7 @@ export const ChangeProfilePicture = () => {
   const { id, profilePicture } = useStoreSelector('session')
   const dispatch = useGlobalDispatch()
 
-  const { mutate, error } = useUpdateUserMutation(id)
+  const { mutate, error, isLoading } = useUpdateUserMutation(id)
   useErrorMessage(error)
 
   useEffect(() => {
@@ -53,6 +53,7 @@ export const ChangeProfilePicture = () => {
 
     return cloudinary?.createUploadWidget(options, (error: any, res: any) => {
       if (res.event && res.event === 'success') {
+        setIsVisible(false)
         const profilePicture = res.info.secure_url
 
         return mutate(
@@ -88,7 +89,7 @@ export const ChangeProfilePicture = () => {
       onMouseLeave={() => setIsVisible(false)}
     >
       <Box>
-        <Avatar src={profilePicture} w='150px' h='150px' />
+        {!isLoading && <Avatar src={profilePicture} w='150px' h='150px' />}
       </Box>
       <Stack
         pos='absolute'
@@ -99,22 +100,28 @@ export const ChangeProfilePicture = () => {
         justify='center'
         bgColor='rgba(50,50,50, .6)'
         borderRadius='inherit'
-        visibility={isVisible ? 'visible' : 'hidden'}
+        visibility={isVisible || isLoading ? 'visible' : 'hidden'}
         title='Selector de foto'
         role='button'
       >
-        <BsCameraFill size='25px' />
-        <Text
-          as='span'
-          fontSize='xs'
-          textTransform='uppercase'
-          letterSpacing={0.15}
-          lineHeight={1.3}
-          maxW='100px'
-          textAlign='center'
-        >
-          Cambiar foto de perfil
-        </Text>
+        {isLoading ? (
+          <Spinner size='lg' />
+        ) : (
+          <>
+            <BsCameraFill size='25px' />
+            <Text
+              as='span'
+              fontSize='xs'
+              textTransform='uppercase'
+              letterSpacing={0.15}
+              lineHeight={1.3}
+              maxW='100px'
+              textAlign='center'
+            >
+              Cambiar foto de perfil
+            </Text>
+          </>
+        )}
       </Stack>
     </Box>
   )

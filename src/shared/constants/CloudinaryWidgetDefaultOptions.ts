@@ -1,8 +1,12 @@
+// https://cloudinary.com/documentation/upload_widget_reference#widget_parameters
+
 export const CLOUDINARY_WIDGET_DEFAULT_OPTIONS = {
   cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
   sources: ['local', 'url', 'camera'],
+  resourceType: 'image',
+  clientAllowedFormats: ['webp', 'png', 'jpg'],
   multiple: false,
-  singleUploadAutoClose: false,
+  // singleUploadAutoClose: false,
   maxImageFileSize: 1500000, // 1.5MB
   styles: {
     palette: {

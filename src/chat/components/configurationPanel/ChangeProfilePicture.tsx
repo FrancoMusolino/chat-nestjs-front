@@ -52,14 +52,6 @@ export const ChangeProfilePicture = () => {
     }
 
     return cloudinary?.createUploadWidget(options, (error: any, res: any) => {
-      if (error) {
-        widget.close({
-          quiet: true,
-        })
-
-        return
-      }
-
       if (res.event && res.event === 'success') {
         const profilePicture = res.info.secure_url
 

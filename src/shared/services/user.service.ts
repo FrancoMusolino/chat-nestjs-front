@@ -16,7 +16,7 @@ type User = {
   chatIDs: string[]
 }
 
-type GetUserChatsResponse = {
+export type GetUserChatsResponse = {
   chats: {
     id: string
     title: string

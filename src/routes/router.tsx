@@ -15,12 +15,16 @@ import { Auth } from './auth'
 import { Register } from '@/auth/pages/Register'
 import { Login } from '@/auth/pages/Login'
 import { Home } from '@/chat/pages/Home'
+import { Chat } from '@/chat/pages/Chat'
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path='/' element={<Root />}>
         <Route index element={<Home />} />
+        <Route path='chat/:chatId'>
+          <Route index element={<Chat />} />
+        </Route>
       </Route>
       <Route path='auth' element={<Auth />}>
         <Route index element={<Navigate to='registro' replace />} />

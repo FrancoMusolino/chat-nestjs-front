@@ -39,6 +39,7 @@ export const ChatList = () => {
         chats!.map(({ id, title, messages, avatar }) => (
           <ChatItem
             key={id}
+            id={id}
             title={title}
             avatar={avatar}
             lastMessage={

@@ -24,7 +24,6 @@ export const SubmitMessage = () => {
   return (
     <HStack
       as='form'
-      minH='70px'
       px={7}
       py={2.5}
       gap={1}

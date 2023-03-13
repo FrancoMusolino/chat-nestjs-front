@@ -7,9 +7,21 @@ import { useBrandTheme } from '@/shared/hooks'
 type MessageItemProps = {
   isConsecutive: boolean
   isSender: boolean
+
+  content: string
+  sender: string
+  senderAvatar?: string
+  time: string
 }
 
-export const MessageItem = ({ isConsecutive, isSender }: MessageItemProps) => {
+export const MessageItem = ({
+  isConsecutive,
+  isSender,
+  content,
+  sender,
+  time,
+  senderAvatar,
+}: MessageItemProps) => {
   const {
     colors: { brand },
   } = useBrandTheme()
@@ -22,7 +34,7 @@ export const MessageItem = ({ isConsecutive, isSender }: MessageItemProps) => {
       gap={2}
     >
       <Box w='35px' order={isSender ? 2 : 1}>
-        {!isConsecutive && <Avatar boxSize='35px' />}
+        {!isConsecutive && <Avatar src={senderAvatar} boxSize='35px' />}
       </Box>
       <Stack
         maxW='65%'
@@ -35,12 +47,12 @@ export const MessageItem = ({ isConsecutive, isSender }: MessageItemProps) => {
       >
         {!isSender && !isConsecutive && (
           <Text alignSelf='flex-start' fontSize='sm' color={brand['text-gray']}>
-            Juan
+            {sender}
           </Text>
         )}
-        <Text fontSize='15px'>Hola sale algo?ale algo?</Text>
+        <Text fontSize='15px'>{content}</Text>
         <Text alignSelf='flex-end' fontSize='xs' color={brand['text-gray']}>
-          19:03
+          {time}
         </Text>
       </Stack>
     </HStack>

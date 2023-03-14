@@ -19,7 +19,6 @@ export const Messages = () => {
   const { id, profilePicture } = useStoreSelector('session')
 
   const { data, isLoading } = useGetChatMessages(chatId!)
-
   const messages = data?.data.messages
 
   const scrollToBottom = () => {
@@ -72,7 +71,9 @@ export const Messages = () => {
                 </ChatTag>
               )}
               <MessageItem
+                id={message.id}
                 content={message.content}
+                deleted={message.deleted}
                 sender={messageSender.username}
                 senderAvatar={
                   isSender ? profilePicture : messageSender.profilePicture

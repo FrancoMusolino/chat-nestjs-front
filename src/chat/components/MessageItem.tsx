@@ -1,37 +1,49 @@
 import React, { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { Box, HStack, Link, MenuItem, Stack, Text } from '@chakra-ui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Linkify from 'react-linkify'
 import { BsChevronDown } from 'react-icons/bs'
+import { TiCancel } from 'react-icons/ti'
 
 import { Avatar } from '@/shared/components/Avatar'
-import { useBrandTheme } from '@/shared/hooks'
+import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
 import { Menu } from '@/shared/components/Menu'
+import { useDeleteMessageMutation } from '../services/message.service'
 
 type MessageItemProps = {
   isConsecutive: boolean
   isSender: boolean
 
+  id: string
   content: string
+  deleted: boolean
   sender: string
   senderAvatar?: string
   time: string
 }
 
 export const MessageItem = ({
+  id,
+  content,
+  deleted,
+  sender,
+  senderAvatar,
+  time,
   isConsecutive,
   isSender,
-  content,
-  sender,
-  time,
-  senderAvatar,
 }: MessageItemProps) => {
   const {
     colors: { brand },
   } = useBrandTheme()
 
+  const { chatId } = useParams()
+
   const [isVisible, setIsVisible] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+
+  const { mutate: deleteMessage, error } = useDeleteMessageMutation(chatId!, id)
+  useErrorMessage(error)
 
   return (
     <HStack
@@ -60,29 +72,40 @@ export const MessageItem = ({
           </Text>
         )}
         <HStack pos='relative'>
-          <Text fontSize='15px' whiteSpace='pre-wrap'>
-            <Linkify
-              componentDecorator={(decoratedText: string) => (
-                <Link
-                  key={Math.random() * 1000}
-                  color={brand.link}
-                  _hover={{ textDecor: 'underline' }}
-                  target='blank'
-                  rel='noreferrer noopener'
-                  href={decoratedText}
-                >
-                  {decoratedText}
-                </Link>
-              )}
-            >
-              {content}
-            </Linkify>
-          </Text>
+          <Linkify
+            componentDecorator={(decoratedText: string) => (
+              <Link
+                key={Math.random() * 1000}
+                color={brand.link}
+                _hover={{ textDecor: 'underline' }}
+                target='blank'
+                rel='noreferrer noopener'
+                href={decoratedText}
+              >
+                {decoratedText}
+              </Link>
+            )}
+          >
+            {deleted ? (
+              <HStack spacing={0}>
+                <TiCancel fill={brand['text-gray']} size='20px' />
+                <i style={{ color: brand['text-gray'] }}>{content}</i>
+              </HStack>
+            ) : (
+              <Text
+                fontSize='15px'
+                whiteSpace='pre-wrap'
+                wordBreak='break-word'
+              >
+                {content}
+              </Text>
+            )}
+          </Linkify>
           <Text alignSelf='flex-end' fontSize='11px' color={brand['text-gray']}>
             {time}
           </Text>
           <AnimatePresence>
-            {isVisible && isSender && (
+            {isVisible && isSender && !deleted && (
               <Stack
                 as={motion.div}
                 pos='absolute'
@@ -114,7 +137,9 @@ export const MessageItem = ({
                     onClick: () => setIsOpen(true),
                   }}
                 >
-                  <MenuItem>Eliminar Mensaje</MenuItem>
+                  <MenuItem onClick={() => deleteMessage()}>
+                    Eliminar Mensaje
+                  </MenuItem>
                 </Menu>
               </Stack>
             )}

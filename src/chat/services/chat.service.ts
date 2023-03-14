@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { axios } from '@/shared/services/axios'
 
@@ -11,6 +11,28 @@ type Chat = {
   createdAt: Date
   lastMessageSendingAt: Date
   userIDs: string[]
+}
+
+export type GetChatMessagesResponse = {
+  messages: {
+    id: string
+    content: string
+    createdAt: Date
+    deleted: boolean
+    user: {
+      id: string
+      username: string
+      profilePicture?: string
+    }
+  }[]
+}
+
+export const useGetChatMessages = (chatId: string) => {
+  return useQuery({
+    queryKey: ['chat-messages', chatId],
+    queryFn: () =>
+      axios.get<GetChatMessagesResponse>(`chat/${chatId}/mensajes`),
+  })
 }
 
 export type CreateChatRequest = {

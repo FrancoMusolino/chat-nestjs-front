@@ -9,8 +9,13 @@ import '@fontsource/inter/700.css'
 import customTheme from '@/theme'
 import { router } from '@/routes/router'
 import { useGlobalDispatch } from '@/shared/app/store'
+import { CACHE_TIME } from '@/shared/constants'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { cacheTime: CACHE_TIME },
+  },
+})
 
 const colorModeManager = createLocalStorageManager('color-mode')
 const setToDarkMode = colorModeManager.set('dark')

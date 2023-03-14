@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { axios } from './axios'
+import { REFETCH_INTERVAL } from '../constants'
 
 type User = {
   id: string
@@ -35,6 +36,7 @@ export const useGetUserChats = (userId: string) => {
   return useQuery({
     queryKey: ['user-chats'],
     queryFn: () => axios.get<GetUserChatsResponse>(`users/${userId}/chats`),
+    refetchInterval: REFETCH_INTERVAL,
   })
 }
 

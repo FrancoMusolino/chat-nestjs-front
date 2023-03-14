@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { Box, HStack, MenuItem, Stack, Text } from '@chakra-ui/react'
+import { Box, HStack, Link, MenuItem, Stack, Text } from '@chakra-ui/react'
 import { AnimatePresence, motion } from 'framer-motion'
+import Linkify from 'react-linkify'
 import { BsChevronDown } from 'react-icons/bs'
 
 import { Avatar } from '@/shared/components/Avatar'
@@ -59,7 +60,24 @@ export const MessageItem = ({
           </Text>
         )}
         <HStack pos='relative'>
-          <Text fontSize='15px'>{content}</Text>
+          <Text fontSize='15px' whiteSpace='pre-wrap'>
+            <Linkify
+              componentDecorator={(decoratedText: string) => (
+                <Link
+                  key={Math.random() * 1000}
+                  color={brand.link}
+                  _hover={{ textDecor: 'underline' }}
+                  target='blank'
+                  rel='noreferrer noopener'
+                  href={decoratedText}
+                >
+                  {decoratedText}
+                </Link>
+              )}
+            >
+              {content}
+            </Linkify>
+          </Text>
           <Text alignSelf='flex-end' fontSize='11px' color={brand['text-gray']}>
             {time}
           </Text>

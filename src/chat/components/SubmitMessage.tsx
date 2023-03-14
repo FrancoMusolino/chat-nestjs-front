@@ -5,8 +5,9 @@ import { motion } from 'framer-motion'
 import ResizeTextarea from 'react-textarea-autosize'
 import { FaPaperPlane } from 'react-icons/fa'
 
-import { useBrandTheme } from '@/shared/hooks'
+import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
 import { TextareaInputWithScroll } from '@/shared/components/TextareaInputWithScroll'
+import { useSubmitMessageMutation } from '../services/message.service'
 
 export const SubmitMessage = () => {
   const {
@@ -15,11 +16,27 @@ export const SubmitMessage = () => {
 
   const { chatId } = useParams()
 
+  const [content, setContent] = useState('')
+
+  const { mutate, error, isLoading } = useSubmitMessageMutation(chatId!)
+  useErrorMessage(error)
+
   useEffect(() => {
     setContent('')
   }, [chatId])
 
-  const [content, setContent] = useState('')
+  const handleSubmit = (e: React.FormEvent<HTMLDivElement>) => {
+    e.preventDefault()
+
+    return mutate(
+      { content },
+      {
+        onSuccess: () => {
+          setContent('')
+        },
+      }
+    )
+  }
 
   return (
     <HStack
@@ -28,7 +45,7 @@ export const SubmitMessage = () => {
       py={2.5}
       gap={1}
       bgColor={brand.secondary}
-      onSubmit={(e) => e.preventDefault()}
+      onSubmit={handleSubmit}
     >
       <TextareaInputWithScroll
         variant='filled'
@@ -61,6 +78,7 @@ export const SubmitMessage = () => {
         alignSelf='flex-end'
         mb={`${1} !important`}
         bgColor='transparent'
+        isLoading={isLoading}
       >
         <FaPaperPlane size='20px' fill={brand['text-gray']} />
       </Button>

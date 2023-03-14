@@ -2,24 +2,47 @@ import React, { ReactNode } from 'react'
 import {
   IconButton,
   Menu as ChakraMenu,
+  MenuProps as ChakraMenuProps,
   MenuButton,
+  MenuButtonProps,
   MenuList,
 } from '@chakra-ui/react'
 import { FaEllipsisV } from 'react-icons/fa'
+import { IconType } from 'react-icons/lib'
+
 import { useBrandTheme } from '../hooks'
 
 type MenuProps = {
   children: ReactNode
+  icon?: IconType
+  menuButtonStyle?: MenuButtonProps
+  menuProps?: Omit<ChakraMenuProps, 'children'>
 }
 
-export const Menu = ({ children }: MenuProps) => {
+export const Menu = ({
+  children,
+  icon: Icon,
+  menuButtonStyle,
+  menuProps,
+}: MenuProps) => {
   const { colors } = useBrandTheme()
 
   return (
-    <ChakraMenu gutter={4} placement='bottom-end'>
+    <ChakraMenu
+      gutter={4}
+      placement='bottom-end'
+      autoSelect={false}
+      {...menuProps}
+    >
       <MenuButton
         as={IconButton}
-        icon={<FaEllipsisV fill={colors.brand['text-gray']} />}
+        icon={
+          Icon ? (
+            <Icon fill={colors.brand['text-gray']} cursor='pointer' />
+          ) : (
+            <FaEllipsisV fill={colors.brand['text-gray']} />
+          )
+        }
         borderRadius='full'
         bgColor='transparent'
         _hover={{
@@ -29,6 +52,7 @@ export const Menu = ({ children }: MenuProps) => {
           bgColor: 'rgba(255,255,255,0.1)',
         }}
         title='menú'
+        {...menuButtonStyle}
       />
       <MenuList>{children}</MenuList>
     </ChakraMenu>

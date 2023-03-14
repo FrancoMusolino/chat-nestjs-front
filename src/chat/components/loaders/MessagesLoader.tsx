@@ -22,8 +22,8 @@ export const MessagesLoader = () => {
             </Box>
 
             <Skeleton
-              w='300px'
-              h='60px'
+              w='280px'
+              h='50px'
               order={isSender ? 1 : 2}
               borderRadius={10}
             />

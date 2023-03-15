@@ -5,21 +5,23 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogOverlay,
-  ButtonProps,
+  ButtonProps as ChakraButtonProps,
   HStack,
   useDisclosure,
 } from '@chakra-ui/react'
 
 import { useBrandTheme } from '../hooks'
-import { Button } from './Button'
+import { Button, ButtonProps } from './Button'
 
 type AlertProps = {
-  trigger: FunctionComponent<ButtonProps>
+  trigger: FunctionComponent<ChakraButtonProps>
   triggerText: string
   alertTitle: string
 
   /**@default Aceptar */
   btnText?: string
+
+  btnProps?: Omit<ButtonProps, 'children'>
 
   action?: () => void
 }
@@ -29,6 +31,7 @@ export const Alert = ({
   triggerText,
   alertTitle,
   btnText = 'Aceptar',
+  btnProps,
   action,
 }: AlertProps) => {
   const { colors } = useBrandTheme()
@@ -81,6 +84,7 @@ export const Alert = ({
                       }
                     : onClose
                 }
+                {...btnProps}
               >
                 {btnText}
               </Button>

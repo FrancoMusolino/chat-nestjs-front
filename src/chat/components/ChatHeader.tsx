@@ -4,10 +4,12 @@ import { AxiosResponse } from 'axios'
 import { useQueryClient } from '@tanstack/react-query'
 import { Heading, HStack, MenuItem } from '@chakra-ui/react'
 
-import { Avatar } from '@/shared/components/Avatar'
+import { AddIntegrantModal } from './AddIntegrantModal'
 import { Header } from './Header'
+import { Avatar } from '@/shared/components/Avatar'
 import { GetUserChatsResponse } from '@/shared/services/user.service'
 import { Menu } from '@/shared/components/Menu'
+import { Modal } from '@/shared/components/Modal'
 
 export const ChatHeader = () => {
   const { chatId } = useParams()
@@ -30,7 +32,13 @@ export const ChatHeader = () => {
       </HStack>
       <Menu>
         <MenuItem>Info. del chat</MenuItem>
-        <MenuItem>Sumar integrante</MenuItem>
+        <Modal
+          trigger={MenuItem}
+          triggerText='Sumar integrante'
+          modalTitle='Sumar Integrante'
+        >
+          <AddIntegrantModal />
+        </Modal>
         <MenuItem>Salir del grupo</MenuItem>
       </Menu>
     </Header>

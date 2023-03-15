@@ -50,7 +50,7 @@ export const Modal = ({
           userSelect='none'
         >
           <HStack as={ModalHeader} align='flex-start' justify='space-between'>
-            <Text fontWeight={400}>{modalTitle}</Text>
+            <Text fontWeight={500}>{modalTitle}</Text>
             <IoCloseCircleOutline
               fontSize={24}
               cursor='pointer'

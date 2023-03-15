@@ -52,3 +52,15 @@ export const useCreateChatMutation = () => {
     },
   })
 }
+
+export type AddIntegrantRequest = {
+  username: string
+}
+
+export const useAddIntegrantMutation = (chatId: string) => {
+  return useMutation({
+    mutationKey: ['add-integrant', chatId],
+    mutationFn: (newIntegrant: AddIntegrantRequest) =>
+      axios.post<Chat>(`chat/${chatId}/sumar-integrante`, newIntegrant),
+  })
+}

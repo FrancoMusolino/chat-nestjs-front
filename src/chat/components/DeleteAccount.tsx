@@ -66,11 +66,11 @@ export const DeleteAccount = () => {
             />
           </Stack>
 
-          <HStack as={ModalFooter} w='full'>
+          <HStack as={ModalFooter} w='full' pt={0}>
             <Button
               btnType='cancel'
               minW='200px'
-              fontSize='md'
+              fontSize='sm'
               fontWeight={500}
               onClick={onClose}
             >
@@ -80,7 +80,7 @@ export const DeleteAccount = () => {
               type='submit'
               btnType='danger'
               minW='200px'
-              fontSize='md'
+              fontSize='sm'
               fontWeight={500}
               isLoading={isLoading}
               isDisabled={Boolean(...(Object.values(errors) || !dirty))}

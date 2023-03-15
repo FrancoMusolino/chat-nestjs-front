@@ -1,6 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { AxiosResponse } from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 import { axios } from '@/shared/services/axios'
+import type { GetUserChatsResponse } from '@/shared/services/user.service'
 
 type Chat = {
   id: string
@@ -62,5 +65,46 @@ export const useAddIntegrantMutation = (chatId: string) => {
     mutationKey: ['add-integrant', chatId],
     mutationFn: (newIntegrant: AddIntegrantRequest) =>
       axios.post<Chat>(`chat/${chatId}/sumar-integrante`, newIntegrant),
+  })
+}
+
+export const useLeaveChatMutation = (chatId: string) => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  const userChatsQueryKey = ['user-chats']
+
+  return useMutation({
+    mutationKey: ['leave-chat', chatId],
+    mutationFn: () => axios.post<Chat>(`chat/${chatId}/abandonar-chat`),
+    onMutate: async () => {
+      type UserChatsResponse = AxiosResponse<GetUserChatsResponse>
+
+      await queryClient.cancelQueries({ queryKey: userChatsQueryKey })
+
+      const previousUserChats =
+        queryClient.getQueryData<UserChatsResponse>(userChatsQueryKey)
+
+      const updatedUserChats = previousUserChats?.data.chats.filter(
+        (chat) => chat.id !== chatId
+      )
+
+      if (updatedUserChats) {
+        queryClient.setQueryData<any>(userChatsQueryKey, (old: any) => ({
+          ...old,
+          data: { chats: updatedUserChats },
+        }))
+      }
+
+      navigate('/', { replace: true })
+
+      return { previousUserChats }
+    },
+    onError: (_err, _, context) => {
+      queryClient.setQueryData(userChatsQueryKey, context?.previousUserChats)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: userChatsQueryKey })
+    },
   })
 }

@@ -6,10 +6,13 @@ import { Heading, HStack, MenuItem } from '@chakra-ui/react'
 
 import { AddIntegrantModal } from './AddIntegrantModal'
 import { Header } from './Header'
+import { useLeaveChatMutation } from '../services/chat.service'
 import { Avatar } from '@/shared/components/Avatar'
-import { GetUserChatsResponse } from '@/shared/services/user.service'
 import { Menu } from '@/shared/components/Menu'
 import { Modal } from '@/shared/components/Modal'
+import { Alert } from '@/shared/components/Alert'
+import { GetUserChatsResponse } from '@/shared/services/user.service'
+import { useErrorMessage } from '@/shared/hooks'
 
 export const ChatHeader = () => {
   const { chatId } = useParams()
@@ -21,6 +24,9 @@ export const ChatHeader = () => {
   ]) as AxiosResponse<GetUserChatsResponse>
 
   const selectedChat = data.chats.find((chat) => chat.id === chatId)
+
+  const { mutate: leaveChat, error } = useLeaveChatMutation(chatId!)
+  useErrorMessage(error)
 
   return (
     <Header>
@@ -39,7 +45,13 @@ export const ChatHeader = () => {
         >
           <AddIntegrantModal />
         </Modal>
-        <MenuItem>Salir del grupo</MenuItem>
+        <Alert
+          trigger={MenuItem}
+          triggerText='Salir del grupo'
+          alertTitle={`¿Deseas salir del grupo “${selectedChat?.title}”?`}
+          btnText='Salir del grupo'
+          action={leaveChat}
+        />
       </Menu>
     </Header>
   )

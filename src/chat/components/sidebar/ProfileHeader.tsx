@@ -4,6 +4,7 @@ import { Heading, HStack, MenuItem } from '@chakra-ui/react'
 
 import { CreateChat } from '../CreateChat'
 import { Header } from '../Header'
+import { NotificationCenter } from './NotificationCenter'
 
 import { Avatar } from '@/shared/components/Avatar'
 import { Menu } from '@/shared/components/Menu'
@@ -28,26 +29,29 @@ export const ProfileHeader = ({ setIsOpen }: ProfileHeaderProps) => {
         <Avatar src={profilePicture} />
         <Heading fontSize='xl'>{username}</Heading>
       </HStack>
-      <Menu>
-        <MenuItem onClick={() => setIsOpen(true)}>Configuración</MenuItem>
-        <Modal
-          trigger={MenuItem}
-          triggerText='Nuevo Grupo'
-          modalTitle='Crear Chat'
-        >
-          <CreateChat />
-        </Modal>
-        <Alert
-          trigger={MenuItem}
-          triggerText='Cerrar sesión'
-          alertTitle='¿Deseas cerrar tú sesión?'
-          btnText='Cerrar sesión'
-          action={() => {
-            dispatch(endSession())
-            queryClient.clear()
-          }}
-        />
-      </Menu>
+      <HStack>
+        <NotificationCenter />
+        <Menu>
+          <MenuItem onClick={() => setIsOpen(true)}>Configuración</MenuItem>
+          <Modal
+            trigger={MenuItem}
+            triggerText='Nuevo Grupo'
+            modalTitle='Crear Chat'
+          >
+            <CreateChat />
+          </Modal>
+          <Alert
+            trigger={MenuItem}
+            triggerText='Cerrar sesión'
+            alertTitle='¿Deseas cerrar tú sesión?'
+            btnText='Cerrar sesión'
+            action={() => {
+              dispatch(endSession())
+              queryClient.clear()
+            }}
+          />
+        </Menu>
+      </HStack>
     </Header>
   )
 }

@@ -4,26 +4,11 @@ import {
   NovuProvider,
   PopoverNotificationCenter,
   IMessage,
-  INovuThemeProvider,
 } from '@novu/notification-center'
 
 import { NotificationBell } from './NotificationBell'
 import { useStoreSelector } from '@/shared/app/store'
-
-const theme: INovuThemeProvider = {
-  common: { fontFamily: 'Inter' },
-  dark: {
-    notificationItem: {
-      read: { background: '#202C33', timeMarkFontColor: '#869694' },
-      unread: {
-        background: '#202C33',
-        timeMarkFontColor: '#869694',
-        notificationItemBeforeBrandColor: '#005C4B',
-      },
-    },
-    layout: { background: '#233138' },
-  },
-}
+import { NOVU_THEME } from '@/shared/constants'
 
 export const NotificationCenter = () => {
   const navigate = useNavigate()
@@ -40,13 +25,13 @@ export const NotificationCenter = () => {
     <NovuProvider
       subscriberId={id}
       applicationIdentifier={import.meta.env.VITE_NOVU_APP_IDENTIFIER}
+      i18n='es'
     >
       <PopoverNotificationCenter
         onNotificationClick={onNotificationClick}
         colorScheme='dark'
         position='right-start'
-        theme={theme}
-        showUserPreferences={false}
+        theme={NOVU_THEME}
       >
         {({ unseenCount }) => (
           <NotificationBell unseenCount={unseenCount || 0} />

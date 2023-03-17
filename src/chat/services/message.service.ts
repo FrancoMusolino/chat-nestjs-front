@@ -3,6 +3,9 @@ import { AxiosResponse } from 'axios'
 
 import { axios } from '@/shared/services/axios'
 import { GetChatMessagesResponse } from './chat.service'
+import { useStoreSelector } from '@/shared/app/store'
+import { randomKeyGenerator } from '@/shared/utils'
+import { DateTime } from '@/shared/helpers'
 
 type Message = {
   id: string
@@ -20,14 +23,52 @@ export type SubmitMessageRequest = {
 
 export const useSubmitMessageMutation = (chatId: string) => {
   const queryClient = useQueryClient()
+  const { id, username, profilePicture } = useStoreSelector('session')
+
+  const chatMessagesQueryKey = ['chat-messages', chatId]
 
   return useMutation({
     mutationKey: ['submit-message', chatId],
     mutationFn: (newMessage: SubmitMessageRequest) =>
       axios.post<Message>(`chat/${chatId}/enviar-mensaje`, newMessage),
+    onMutate: async (newMessageReq) => {
+      type ChatMessagesResponse = AxiosResponse<GetChatMessagesResponse>
+
+      await queryClient.cancelQueries({ queryKey: chatMessagesQueryKey })
+
+      const previousMessages =
+        queryClient.getQueryData<ChatMessagesResponse>(chatMessagesQueryKey)
+
+      const newMessage = {
+        id: randomKeyGenerator(),
+        content: newMessageReq.content,
+        createdAt: DateTime.now().date,
+        deleted: false,
+        user: {
+          id,
+          username,
+          profilePicture,
+        },
+      }
+
+      queryClient.setQueryData<ChatMessagesResponse>(
+        chatMessagesQueryKey,
+        (old: any) => ({
+          ...old,
+          data: { messages: [...old.data.messages, newMessage] },
+        })
+      )
+
+      return { previousMessages }
+    },
+    onError: (_err, _, context) => {
+      queryClient.setQueryData(chatMessagesQueryKey, context?.previousMessages)
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['chat-messages', chatId] })
       queryClient.invalidateQueries({ queryKey: ['user-chats'] })
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: chatMessagesQueryKey })
     },
   })
 }

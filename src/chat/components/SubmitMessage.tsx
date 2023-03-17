@@ -18,7 +18,7 @@ export const SubmitMessage = () => {
 
   const [content, setContent] = useState('')
 
-  const { mutate, error, isLoading } = useSubmitMessageMutation(chatId!)
+  const { mutate, error } = useSubmitMessageMutation(chatId!)
   useErrorMessage(error)
 
   useEffect(() => {
@@ -27,12 +27,14 @@ export const SubmitMessage = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLDivElement>) => {
     e.preventDefault()
+    const prevContent = content
+    setContent('')
 
     return mutate(
       { content },
       {
-        onSuccess: () => {
-          setContent('')
+        onError: () => {
+          setContent(prevContent)
         },
       }
     )
@@ -78,7 +80,6 @@ export const SubmitMessage = () => {
         alignSelf='flex-end'
         mb={`${1} !important`}
         bgColor='transparent'
-        isLoading={isLoading}
       >
         <FaPaperPlane size='20px' fill={brand['text-gray']} />
       </Button>

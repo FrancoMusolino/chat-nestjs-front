@@ -30,8 +30,8 @@ export const ConfigurationPanel = ({ setIsOpen }: ConfigurationPanelProps) => {
       }}
     >
       <Stack h='full'>
-        <Header paddingLeft={`${8} !important`}>
-          <HStack spacing={6}>
+        <Header>
+          <HStack paddingLeft={6} spacing={6}>
             <FiArrowLeft
               cursor='pointer'
               size='24px'

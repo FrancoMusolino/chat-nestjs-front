@@ -38,6 +38,26 @@ export const useGetChatMessages = (chatId: string) => {
   })
 }
 
+export type GetChatIntegrantsResponse = {
+  createdBy: string
+  users: {
+    id: string
+    username: string
+    profilePicture?: string
+    status: string
+    connected: boolean
+    lastConnection?: string
+  }[]
+}
+
+export const useGetChatIntegrants = (chatId: string) => {
+  return useQuery({
+    queryKey: ['chat-integrants', chatId],
+    queryFn: () =>
+      axios.get<GetChatIntegrantsResponse>(`chat/${chatId}/integrantes`),
+  })
+}
+
 export type CreateChatRequest = {
   title: string
   description?: string
@@ -61,10 +81,15 @@ export type AddIntegrantRequest = {
 }
 
 export const useAddIntegrantMutation = (chatId: string) => {
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationKey: ['add-integrant', chatId],
     mutationFn: (newIntegrant: AddIntegrantRequest) =>
       axios.post<Chat>(`chat/${chatId}/sumar-integrante`, newIntegrant),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chat-integrants', chatId] })
+    },
   })
 }
 

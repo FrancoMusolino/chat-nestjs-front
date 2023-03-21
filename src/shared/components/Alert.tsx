@@ -5,6 +5,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogOverlay,
+  AlertDialogProps,
   ButtonProps as ChakraButtonProps,
   HStack,
   useDisclosure,
@@ -24,7 +25,7 @@ type AlertProps = {
   btnProps?: Omit<ButtonProps, 'children'>
 
   action?: () => void
-}
+} & Partial<AlertDialogProps>
 
 export const Alert = ({
   trigger: Trigger,
@@ -33,6 +34,7 @@ export const Alert = ({
   btnText = 'Aceptar',
   btnProps,
   action,
+  ...props
 }: AlertProps) => {
   const { colors } = useBrandTheme()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -43,6 +45,7 @@ export const Alert = ({
       <Trigger onClick={onOpen}>{triggerText}</Trigger>
 
       <AlertDialog
+        {...props}
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
         onClose={onClose}

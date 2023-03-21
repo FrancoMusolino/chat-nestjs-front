@@ -21,6 +21,7 @@ export const ChatIntegrants = () => {
   const { data, isLoading } = useGetChatIntegrants(chatId!)
 
   const users = data?.data.users
+  const chatCreator = data?.data.createdBy
 
   return (
     <Stack py={4} px={16} spacing={4} overflowY='hidden'>
@@ -36,14 +37,16 @@ export const ChatIntegrants = () => {
             user.id === id ? (
               <ChatIntegrantItem
                 key={id}
-                isCreator={stateUser.username === data?.data.createdBy}
+                isCreator={stateUser.username === chatCreator}
                 {...user}
                 {...stateUser}
+                username='Tú'
               />
             ) : (
               <ChatIntegrantItem
                 key={user.id}
-                isCreator={user.username === data?.data.createdBy}
+                isCreator={user.username === chatCreator}
+                showMenu={stateUser.username === chatCreator}
                 {...user}
               />
             )

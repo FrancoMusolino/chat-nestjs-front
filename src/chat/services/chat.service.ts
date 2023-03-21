@@ -133,3 +133,49 @@ export const useLeaveChatMutation = (chatId: string) => {
     },
   })
 }
+
+export type PushOutIntegrantRequest = {
+  username: string
+}
+
+export const usePushOutIntegrantMutation = (chatId: string) => {
+  const queryClient = useQueryClient()
+
+  const chatIntegrantsQueryKey = ['chat-integrants', chatId]
+
+  return useMutation({
+    mutationKey: ['push-out-integrant', chatId],
+    mutationFn: (data: PushOutIntegrantRequest) =>
+      axios.post<Chat>(`chat/${chatId}/expulsar-chat`, data),
+    onMutate: async ({ username }) => {
+      type ChatIntegrantsResponse = AxiosResponse<GetChatIntegrantsResponse>
+
+      await queryClient.cancelQueries({ queryKey: chatIntegrantsQueryKey })
+
+      const previousChatIntegrants =
+        queryClient.getQueryData<ChatIntegrantsResponse>(chatIntegrantsQueryKey)
+
+      const updatedChatIntegrants = previousChatIntegrants?.data.users.filter(
+        (user) => user.username !== username
+      )
+
+      if (updatedChatIntegrants) {
+        queryClient.setQueryData<any>(chatIntegrantsQueryKey, (old: any) => ({
+          ...old,
+          data: { ...old.data, users: updatedChatIntegrants },
+        }))
+      }
+
+      return { previousChatIntegrants }
+    },
+    onError: (_err, _, context) => {
+      queryClient.setQueryData(
+        chatIntegrantsQueryKey,
+        context?.previousChatIntegrants
+      )
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: chatIntegrantsQueryKey })
+    },
+  })
+}

@@ -179,3 +179,44 @@ export const usePushOutIntegrantMutation = (chatId: string) => {
     },
   })
 }
+
+export const useDeleteChatMutation = (chatId: string) => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  const userChatsQueryKey = ['user-chats']
+
+  return useMutation({
+    mutationKey: ['delete-chat', chatId],
+    mutationFn: () => axios.delete<Chat>(`chat/${chatId}`),
+    onMutate: async () => {
+      type UserChatsResponse = AxiosResponse<GetUserChatsResponse>
+
+      await queryClient.cancelQueries({ queryKey: userChatsQueryKey })
+
+      const previousUserChats =
+        queryClient.getQueryData<UserChatsResponse>(userChatsQueryKey)
+
+      const updatedUserChats = previousUserChats?.data.chats.filter(
+        (chat) => chat.id !== chatId
+      )
+
+      if (updatedUserChats) {
+        queryClient.setQueryData<any>(userChatsQueryKey, (old: any) => ({
+          ...old,
+          data: { chats: updatedUserChats },
+        }))
+      }
+
+      navigate('/', { replace: true })
+
+      return { previousUserChats }
+    },
+    onError: (_err, _, context) => {
+      queryClient.setQueryData(userChatsQueryKey, context?.previousUserChats)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: userChatsQueryKey })
+    },
+  })
+}

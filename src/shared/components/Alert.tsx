@@ -1,4 +1,4 @@
-import { useRef, FunctionComponent } from 'react'
+import { useRef, FunctionComponent, ReactNode } from 'react'
 import {
   AlertDialog,
   AlertDialogContent,
@@ -17,7 +17,7 @@ type AlertProps = {
   trigger: FunctionComponent<ButtonProps>
   triggerText: string
   triggerProps?: Omit<ButtonProps, 'children'>
-  alertTitle: string
+  alertTitle: ReactNode
 
   /**@default Aceptar */
   btnText?: string

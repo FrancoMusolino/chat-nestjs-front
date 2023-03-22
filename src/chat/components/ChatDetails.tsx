@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { useSelectedChat } from '../hooks/useSelectedChat'
 import { Avatar } from '@/shared/components/Avatar'
 import { useBrandTheme } from '@/shared/hooks'
-import { Button } from '@/shared/components/Button'
+import { ChatDangerActions } from './ChatDangerActions'
 
 export const ChatDetails = () => {
   const {
@@ -52,14 +52,7 @@ export const ChatDetails = () => {
             Grupo creado por Juancito el 10/02/2023, 19:43hs
           </Text>
         </Stack>
-        <HStack spacing={5} alignSelf='flex-end'>
-          <Button btnType='danger' fontSize='15px' px={10}>
-            Eliminar Grupo
-          </Button>
-          <Button btnType='danger' fontSize='15px' px={10}>
-            Salir del grupo
-          </Button>
-        </HStack>
+        <ChatDangerActions />
       </Stack>
     </HStack>
   )

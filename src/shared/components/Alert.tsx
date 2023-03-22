@@ -6,7 +6,6 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   AlertDialogProps,
-  ButtonProps as ChakraButtonProps,
   HStack,
   useDisclosure,
 } from '@chakra-ui/react'
@@ -15,8 +14,9 @@ import { useBrandTheme } from '../hooks'
 import { Button, ButtonProps } from './Button'
 
 type AlertProps = {
-  trigger: FunctionComponent<ChakraButtonProps>
+  trigger: FunctionComponent<ButtonProps>
   triggerText: string
+  triggerProps?: Omit<ButtonProps, 'children'>
   alertTitle: string
 
   /**@default Aceptar */
@@ -30,6 +30,7 @@ type AlertProps = {
 export const Alert = ({
   trigger: Trigger,
   triggerText,
+  triggerProps,
   alertTitle,
   btnText = 'Aceptar',
   btnProps,
@@ -42,7 +43,9 @@ export const Alert = ({
 
   return (
     <>
-      <Trigger onClick={onOpen}>{triggerText}</Trigger>
+      <Trigger {...triggerProps} onClick={onOpen}>
+        {triggerText}
+      </Trigger>
 
       <AlertDialog
         {...props}
@@ -69,7 +72,7 @@ export const Alert = ({
               <Button
                 btnType='cancel'
                 minW='200px'
-                fontSize='md'
+                fontSize='15px'
                 fontWeight={500}
                 onClick={onClose}
               >
@@ -77,7 +80,7 @@ export const Alert = ({
               </Button>
               <Button
                 minW='200px'
-                fontSize='md'
+                fontSize='15px'
                 fontWeight={500}
                 onClick={
                   action

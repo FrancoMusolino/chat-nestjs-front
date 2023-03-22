@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { IoCloseCircleOutline } from 'react-icons/io5'
 
-import { useBrandTheme } from '../hooks'
+import { useBrandColors } from '../hooks'
 import { ButtonProps } from './Button'
 
 type ModalProps = {
@@ -28,7 +28,7 @@ export const Modal = ({
   triggerText,
   modalTitle,
 }: ModalProps) => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -45,7 +45,7 @@ export const Modal = ({
       >
         <ModalOverlay />
         <ModalContent
-          bgColor={colors.brand.secondary}
+          bgColor={colors.secondary}
           borderRadius={15}
           userSelect='none'
         >

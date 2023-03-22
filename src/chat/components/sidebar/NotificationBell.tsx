@@ -2,20 +2,18 @@ import React from 'react'
 import { Box, Text } from '@chakra-ui/react'
 import { FaBell } from 'react-icons/fa'
 
-import { useBrandTheme } from '@/shared/hooks'
+import { useBrandColors } from '@/shared/hooks'
 
 type NotificationBellProps = {
   unseenCount: number
 }
 
 export const NotificationBell = ({ unseenCount }: NotificationBellProps) => {
-  const {
-    colors: { brand },
-  } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   return (
     <Box pos='relative' cursor='pointer'>
-      <FaBell size='20px' fill={brand['text-gray']} />
+      <FaBell size='20px' fill={colors['text-gray']} />
       <Text
         as='span'
         pos='absolute'
@@ -24,7 +22,7 @@ export const NotificationBell = ({ unseenCount }: NotificationBellProps) => {
         w='15px'
         textAlign='center'
         fontSize='2xs'
-        bgColor={brand.danger}
+        bgColor={colors.danger}
         borderRadius='full'
         userSelect='none'
       >

@@ -3,13 +3,13 @@ import { Heading, Image, Stack, Text } from '@chakra-ui/react'
 
 import { Header } from '../components/Header'
 
-import { useBrandTheme } from '@/shared/hooks'
+import { useBrandColors } from '@/shared/hooks'
 
 export const Home = () => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   return (
-    <Stack h='full' borderBottom={`8px solid ${colors.brand.primary}`}>
+    <Stack h='full' borderBottom={`8px solid ${colors.primary}`}>
       <Header />
       <Stack flexGrow={1} justify='center' align='center'>
         <Image

@@ -5,14 +5,12 @@ import { motion } from 'framer-motion'
 import ResizeTextarea from 'react-textarea-autosize'
 import { FaPaperPlane } from 'react-icons/fa'
 
-import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
+import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { TextareaInputWithScroll } from '@/shared/components/TextareaInputWithScroll'
 import { useSubmitMessageMutation } from '../services/message.service'
 
 export const SubmitMessage = () => {
-  const {
-    colors: { brand },
-  } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   const { chatId } = useParams()
 
@@ -46,7 +44,7 @@ export const SubmitMessage = () => {
       px={7}
       py={2.5}
       gap={1}
-      bgColor={brand.secondary}
+      bgColor={colors.secondary}
       onSubmit={handleSubmit}
     >
       <TextareaInputWithScroll
@@ -60,14 +58,14 @@ export const SubmitMessage = () => {
         px={5}
         py={2.5}
         fontSize='15px'
-        color={brand['text-white']}
-        bgColor={brand.background}
+        color={colors['text-white']}
+        bgColor={colors.background}
         borderRadius={15}
         _hover={{
-          bgColor: brand.background,
+          bgColor: colors.background,
         }}
         _focus={{
-          bgColor: brand.background,
+          bgColor: colors.background,
         }}
         onChange={(e) => setContent(e.target.value)}
       />
@@ -81,7 +79,7 @@ export const SubmitMessage = () => {
         mb={`${1} !important`}
         bgColor='transparent'
       >
-        <FaPaperPlane size='20px' fill={brand['text-gray']} />
+        <FaPaperPlane size='20px' fill={colors['text-gray']} />
       </Button>
     </HStack>
   )

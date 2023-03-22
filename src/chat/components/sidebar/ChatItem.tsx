@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { HStack, Stack, Text } from '@chakra-ui/react'
 
-import { useBrandTheme } from '@/shared/hooks'
+import { useBrandColors } from '@/shared/hooks'
 import { Avatar } from '@/shared/components/Avatar'
 import { DateTime } from '@/shared/helpers'
 
@@ -23,7 +23,7 @@ export const ChatItem = ({
   avatar,
   lastMessage: { hasMessage, content, lastMessageDate },
 }: ChatItemProps) => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   const navigate = useNavigate()
   const { chatId } = useParams()
@@ -40,8 +40,8 @@ export const ChatItem = ({
       px={3}
       spacing={3}
       cursor='pointer'
-      bgColor={chatId === id ? colors.brand.secondary : 'transparent'}
-      _hover={{ bgColor: colors.brand.secondary }}
+      bgColor={chatId === id ? colors.secondary : 'transparent'}
+      _hover={{ bgColor: colors.secondary }}
       onClick={() => navigate(`chat/${id}`)}
     >
       <Avatar src={avatar || ''} isGroupPicture />
@@ -50,7 +50,7 @@ export const ChatItem = ({
         justify='space-between'
         paddingBlock={4}
         overflow='hidden'
-        borderTop={`1px solid ${colors.brand.secondary}`}
+        borderTop={`1px solid ${colors.secondary}`}
       >
         <Stack flexGrow={1} spacing={1} overflow='hidden'>
           <Text
@@ -70,13 +70,13 @@ export const ChatItem = ({
             textOverflow='ellipsis'
             fontSize='xs'
             lineHeight={1}
-            color={colors.brand['text-gray']}
+            color={colors['text-gray']}
           >
             {content || 'Empieza a enviar mensajes al chat!!'}
           </Text>
         </Stack>
         {hasMessage && (
-          <Text fontSize='xs' color={colors.brand['text-gray']}>
+          <Text fontSize='xs' color={colors['text-gray']}>
             {messageDateTime!.isToday() ? 'Hoy' : messageDateTime!.formatDate()}
           </Text>
         )}

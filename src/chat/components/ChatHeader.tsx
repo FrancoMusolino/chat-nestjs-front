@@ -5,16 +5,19 @@ import { Heading, HStack, MenuItem } from '@chakra-ui/react'
 import { AddIntegrantModal } from './AddIntegrantModal'
 import { Header } from './Header'
 import { useLeaveChatMutation } from '../services/chat.service'
+import { useSelectedChat } from '../hooks/useSelectedChat'
 import { Avatar } from '@/shared/components/Avatar'
 import { Menu } from '@/shared/components/Menu'
 import { Modal } from '@/shared/components/Modal'
 import { Alert } from '@/shared/components/Alert'
 import { useErrorMessage } from '@/shared/hooks'
-import { useSelectedChat } from '../hooks/useSelectedChat'
+import { useGlobalDispatch } from '@/shared/app/store'
+import { changeInfoPanelVisibility } from '@/shared/features/chat/chat.actions'
 
 export const ChatHeader = () => {
   const { chatId } = useParams()
-  const navigate = useNavigate()
+
+  const dispatch = useGlobalDispatch()
 
   const { selectedChat } = useSelectedChat(chatId!)
 
@@ -30,7 +33,13 @@ export const ChatHeader = () => {
         </Heading>
       </HStack>
       <Menu>
-        <MenuItem onClick={() => navigate('info')}>Info. del chat</MenuItem>
+        <MenuItem
+          onClick={() =>
+            dispatch(changeInfoPanelVisibility({ infoPanelIsVisible: true }))
+          }
+        >
+          Info. del chat
+        </MenuItem>
         <Modal
           trigger={MenuItem}
           triggerText='Sumar integrante'

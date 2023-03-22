@@ -9,12 +9,17 @@ import {
 } from '../services/chat.service'
 import { Button } from '@/shared/components/Button'
 import { Alert } from '@/shared/components/Alert'
-import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
+import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 
-export const ChatDangerActions = () => {
-  const {
-    colors: { brand },
-  } = useBrandTheme()
+type ChatDangerActionsProps = {
+  /**@default false */
+  showDeleteChatBtn?: boolean
+}
+
+export const ChatDangerActions = ({
+  showDeleteChatBtn = false,
+}: ChatDangerActionsProps) => {
+  const { colors } = useBrandColors()
 
   const { chatId } = useParams()
 
@@ -32,30 +37,33 @@ export const ChatDangerActions = () => {
 
   return (
     <HStack spacing={5} alignSelf='flex-end'>
-      <Alert
-        trigger={Button}
-        triggerText='Eliminar Grupo'
-        triggerProps={{
-          btnType: 'danger',
-          fontSize: '15px',
-          px: 10,
-        }}
-        alertTitle={
-          <Stack>
-            <Text>
-              Alto ✋ ¿Seguro deseas eliminar el grupo “{selectedChat?.title}”?
-            </Text>
-            <Text as='span' fontSize='md' color={brand.danger}>
-              Se perderán todos los mensajes
-            </Text>
-          </Stack>
-        }
-        btnText='Eliminar grupo'
-        btnProps={{
-          btnType: 'danger',
-        }}
-        action={deleteChat}
-      />
+      {showDeleteChatBtn && (
+        <Alert
+          trigger={Button}
+          triggerText='Eliminar Grupo'
+          triggerProps={{
+            btnType: 'danger',
+            fontSize: '15px',
+            px: 10,
+          }}
+          alertTitle={
+            <Stack>
+              <Text>
+                Alto ✋ ¿Seguro deseas eliminar el grupo “{selectedChat?.title}
+                ”?
+              </Text>
+              <Text as='span' fontSize='md' color={colors.danger}>
+                Se perderán todos los mensajes
+              </Text>
+            </Stack>
+          }
+          btnText='Eliminar grupo'
+          btnProps={{
+            btnType: 'danger',
+          }}
+          action={deleteChat}
+        />
+      )}
       <Alert
         trigger={Button}
         triggerText='Salir del grupo'

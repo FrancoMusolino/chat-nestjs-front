@@ -5,14 +5,12 @@ import { Stack, Text } from '@chakra-ui/react'
 import { ChatIntegrantItem } from './ChatIntegrantItem'
 import { ChatIntegrantLoader } from './loaders/ChatIntegrantLoader'
 import { useGetChatIntegrants } from '../services/chat.service'
-import { useBrandTheme } from '@/shared/hooks'
+import { useBrandColors } from '@/shared/hooks'
 import { SectionWithScroll } from '@/shared/components/SectionWithScroll'
 import { useStoreSelector } from '@/shared/app/store'
 
 export const ChatIntegrants = () => {
-  const {
-    colors: { brand },
-  } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   const { chatId } = useParams()
 
@@ -25,8 +23,12 @@ export const ChatIntegrants = () => {
 
   return (
     <Stack py={4} px={16} spacing={4} overflowY='hidden'>
-      <Text color={brand['text-gray']} fontSize='sm'>
-        {isLoading ? 'Cargando...' : `${users?.length} participantes`}
+      <Text color={colors['text-gray']} fontSize='sm'>
+        {isLoading
+          ? 'Cargando...'
+          : users!.length > 1
+          ? `${users?.length} participantes`
+          : '1 participante'}
       </Text>
 
       <SectionWithScroll pr={3} spacing={5}>

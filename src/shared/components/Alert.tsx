@@ -10,7 +10,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 
-import { useBrandTheme } from '../hooks'
+import { useBrandColors } from '../hooks'
 import { Button, ButtonProps } from './Button'
 
 type AlertProps = {
@@ -37,7 +37,7 @@ export const Alert = ({
   action,
   ...props
 }: AlertProps) => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const cancelRef = useRef<any>()
 
@@ -55,7 +55,7 @@ export const Alert = ({
       >
         <AlertDialogOverlay>
           <AlertDialogContent
-            bgColor={colors.brand.secondary}
+            bgColor={colors.secondary}
             borderRadius={15}
             alignSelf='center'
             userSelect='none'

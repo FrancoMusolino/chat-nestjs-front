@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom'
 import { Badge, HStack, MenuItem, Stack, Text } from '@chakra-ui/react'
 import { BsChevronDown } from 'react-icons/bs'
 
-import { useSelectedChat } from '../hooks/useSelectedChat'
-import { usePushOutIntegrantMutation } from '../services/chat.service'
+import { useSelectedChat } from '../../hooks/useSelectedChat'
+import { usePushOutIntegrantMutation } from '../../services/chat.service'
 import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { Avatar } from '@/shared/components/Avatar'
 import { Menu } from '@/shared/components/Menu'
@@ -87,9 +87,10 @@ export const ChatIntegrantItem = ({
           </Text>
         </Stack>
       </HStack>
-      <HStack spacing={3}>
+      <Stack spacing={1} alignItems='flex-end'>
         {isCreator && (
           <Badge
+            w='min-content'
             bgColor={colors.secondary}
             fontSize='xs'
             fontWeight={500}
@@ -109,7 +110,7 @@ export const ChatIntegrantItem = ({
             ? 'hola'
             : 'Nunca se conectó'}
         </Text>
-      </HStack>
+      </Stack>
     </HStack>
   )
 }

@@ -4,13 +4,13 @@ import { ChatItem } from './ChatItem'
 import { EmptyChatList } from './EmptyChatList'
 import { ChatItemLoader } from '../loaders/ChatItemLoader'
 
-import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
+import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { SectionWithScroll } from '@/shared/components/SectionWithScroll'
 import { useGetUserChats } from '@/shared/services/user.service'
 import { useStoreSelector } from '@/shared/app/store'
 
 export const ChatList = () => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   const { id } = useStoreSelector('session')
   const { filter } = useStoreSelector('chat')
@@ -31,7 +31,7 @@ export const ChatList = () => {
     <SectionWithScroll
       maxH='calc(100% - 75px - 70px)'
       spacing={0}
-      borderBottom={`1px solid ${colors.brand.secondary}`}
+      borderBottom={`1px solid ${colors.secondary}`}
     >
       {isLoading ? (
         <ChatItemLoader />

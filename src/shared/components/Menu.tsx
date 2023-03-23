@@ -10,7 +10,7 @@ import {
 import { FaEllipsisV } from 'react-icons/fa'
 import { IconType } from 'react-icons/lib'
 
-import { useBrandTheme } from '../hooks'
+import { useBrandColors } from '../hooks'
 
 type MenuProps = {
   children: ReactNode
@@ -25,7 +25,7 @@ export const Menu = ({
   menuButtonStyle,
   menuProps,
 }: MenuProps) => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   return (
     <ChakraMenu
@@ -38,9 +38,9 @@ export const Menu = ({
         as={IconButton}
         icon={
           Icon ? (
-            <Icon fill={colors.brand['text-gray']} cursor='pointer' />
+            <Icon fill={colors['text-gray']} cursor='pointer' />
           ) : (
-            <FaEllipsisV fill={colors.brand['text-gray']} />
+            <FaEllipsisV fill={colors['text-gray']} />
           )
         }
         borderRadius='full'

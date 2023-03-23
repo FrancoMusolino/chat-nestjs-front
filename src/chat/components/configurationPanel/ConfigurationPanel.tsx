@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { FiArrowLeft } from 'react-icons/fi'
 
 import { Header } from '../Header'
-import { useBrandTheme } from '@/shared/hooks'
+import { useBrandColors } from '@/shared/hooks'
 import { ProfileSettings } from './ProfileSettings'
 
 type ConfigurationPanelProps = {
@@ -12,7 +12,7 @@ type ConfigurationPanelProps = {
 }
 
 export const ConfigurationPanel = ({ setIsOpen }: ConfigurationPanelProps) => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   return (
     <motion.div
@@ -26,7 +26,7 @@ export const ConfigurationPanel = ({ setIsOpen }: ConfigurationPanelProps) => {
         position: 'absolute',
         zIndex: 1000,
         margin: 0,
-        backgroundColor: colors.brand.background,
+        backgroundColor: colors.background,
       }}
     >
       <Stack h='full'>

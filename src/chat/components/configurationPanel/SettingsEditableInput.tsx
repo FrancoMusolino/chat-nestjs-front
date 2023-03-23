@@ -9,7 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 
-import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
+import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { useUpdateUserMutation } from '@/shared/services/user.service'
 import { useGlobalDispatch, useStoreSelector } from '@/shared/app/store'
 import { updateSession } from '@/shared/features/session/session.actions'
@@ -21,7 +21,7 @@ const MAX_LENGTH = 55
 export const SettingsEditableInput = ({
   ...props
 }: SettingsEditableInputProps) => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   const { id, status } = useStoreSelector('session')
   const dispatch = useGlobalDispatch()
@@ -61,18 +61,18 @@ export const SettingsEditableInput = ({
 
   return (
     <Stack spacing={0}>
-      <Text fontSize='sm' color={colors.brand.primary}>
+      <Text fontSize='sm' color={colors.primary}>
         Tu estado
       </Text>
       <HStack w='full' align='flex-end' spacing={3}>
         <Editable
           value={value}
           borderBottom='1px solid'
-          borderColor={colors.brand.secondary}
+          borderColor={colors.secondary}
           w='92%'
           overflow='hidden'
           _focusWithin={{
-            borderColor: colors.brand.primary,
+            borderColor: colors.primary,
           }}
           selectAllOnFocus={false}
           onEdit={() => setVisible(true)}
@@ -89,7 +89,7 @@ export const SettingsEditableInput = ({
           />
         </Editable>
         {visible && (
-          <Text fontSize='sm' color={colors.brand.primary} flexGrow={1}>
+          <Text fontSize='sm' color={colors.primary} flexGrow={1}>
             {MAX_LENGTH - chars}
           </Text>
         )}

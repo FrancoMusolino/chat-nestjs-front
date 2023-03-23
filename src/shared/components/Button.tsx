@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 
-import { useBrandTheme } from '../hooks'
+import { useBrandColors } from '../hooks'
 
 export type ButtonProps = StyleProps &
   ButtonChakraProps & {
@@ -21,20 +21,20 @@ export const Button = ({
   btnType = 'primary',
   ...rest
 }: ButtonProps) => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   if (btnType === 'cancel') {
     return (
       <BaseButton
-        bgColor={colors.brand['button-gray']}
+        bgColor={colors['button-gray']}
         _hover={{
-          bgColor: colors.brand['secondary-hover'],
+          bgColor: colors['secondary-hover'],
         }}
         _active={{
-          bgColor: colors.brand['secondary-hover'],
+          bgColor: colors['secondary-hover'],
         }}
         _disabled={{
-          bgColor: colors.brand['button-gray'],
+          bgColor: colors['button-gray'],
           opacity: 0.7,
           cursor: 'not-allowed',
         }}
@@ -48,15 +48,15 @@ export const Button = ({
   if (btnType === 'danger') {
     return (
       <BaseButton
-        bgColor={colors.brand.danger}
+        bgColor={colors.danger}
         _hover={{
-          bgColor: colors.brand['danger-hover'],
+          bgColor: colors['danger-hover'],
         }}
         _active={{
-          bgColor: colors.brand['danger-hover'],
+          bgColor: colors['danger-hover'],
         }}
         _disabled={{
-          bgColor: colors.brand.danger,
+          bgColor: colors.danger,
           opacity: 0.7,
           cursor: 'not-allowed',
         }}
@@ -69,15 +69,15 @@ export const Button = ({
 
   return (
     <BaseButton
-      bgColor={colors.brand.primary}
+      bgColor={colors.primary}
       _hover={{
-        bgColor: colors.brand['primary-hover'],
+        bgColor: colors['primary-hover'],
       }}
       _active={{
-        bgColor: colors.brand['primary-hover'],
+        bgColor: colors['primary-hover'],
       }}
       _disabled={{
-        bgColor: colors.brand.primary,
+        bgColor: colors.primary,
         opacity: 0.7,
         cursor: 'not-allowed',
       }}
@@ -89,13 +89,13 @@ export const Button = ({
 }
 
 const BaseButton = ({ children, ...props }: Omit<ButtonProps, 'btnType'>) => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   return (
     <ChakraButton
       as={motion.button}
       whileTap={{ scale: 0.95 }}
-      color={colors.brand['text-white']}
+      color={colors['text-white']}
       fontSize='lg'
       fontWeight={700}
       {...props}

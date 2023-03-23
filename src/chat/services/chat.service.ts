@@ -16,6 +16,13 @@ type Chat = {
   userIDs: string[]
 }
 
+export const useGetChat = (chatId: string) => {
+  return useQuery({
+    queryKey: ['chat', chatId],
+    queryFn: () => axios.get<Chat>(`chat/${chatId}`),
+  })
+}
+
 export type GetChatMessagesResponse = {
   messages: {
     id: string
@@ -173,6 +180,9 @@ export const usePushOutIntegrantMutation = (chatId: string) => {
         chatIntegrantsQueryKey,
         context?.previousChatIntegrants
       )
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chat', chatId] })
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: chatIntegrantsQueryKey })

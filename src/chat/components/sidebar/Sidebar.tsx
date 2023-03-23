@@ -6,11 +6,11 @@ import { Search } from './Search'
 import { ChatList } from './ChatList'
 import { ConfigurationPanel } from '../configurationPanel/ConfigurationPanel'
 
-import { useBrandTheme } from '@/shared/hooks'
+import { useBrandColors } from '@/shared/hooks'
 import { AnimatePresence } from 'framer-motion'
 
 export const Sidebar = () => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   const [isOpen, setIsOpen] = useState(false)
 
@@ -21,7 +21,7 @@ export const Sidebar = () => {
       maxW='30%'
       h={{ base: '100vh', '2xl': 'calc(100vh - 2rem)' }}
       flex='0 0 30%'
-      borderRight={`1px solid ${colors.brand.secondary}`}
+      borderRight={`1px solid ${colors.secondary}`}
     >
       <AnimatePresence presenceAffectsLayout={false}>
         {isOpen && <ConfigurationPanel setIsOpen={setIsOpen} />}

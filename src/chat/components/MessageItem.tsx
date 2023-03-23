@@ -6,10 +6,11 @@ import Linkify from 'react-linkify'
 import { BsChevronDown } from 'react-icons/bs'
 import { TiCancel } from 'react-icons/ti'
 
-import { Avatar } from '@/shared/components/Avatar'
-import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
-import { Menu } from '@/shared/components/Menu'
 import { useDeleteMessageMutation } from '../services/message.service'
+import { Avatar } from '@/shared/components/Avatar'
+import { useBrandColors, useErrorMessage } from '@/shared/hooks'
+import { Menu } from '@/shared/components/Menu'
+import { useStoreSelector } from '@/shared/app/store'
 
 type MessageItemProps = {
   isConsecutive: boolean
@@ -33,11 +34,11 @@ export const MessageItem = ({
   isConsecutive,
   isSender,
 }: MessageItemProps) => {
-  const {
-    colors: { brand },
-  } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   const { chatId } = useParams()
+
+  const { infoPanelIsVisible } = useStoreSelector('chat')
 
   const [isVisible, setIsVisible] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
@@ -56,18 +57,22 @@ export const MessageItem = ({
         {!isConsecutive && <Avatar src={senderAvatar} boxSize='30px' />}
       </Box>
       <Stack
-        maxW='65%'
+        maxW={infoPanelIsVisible ? '90%' : '65%'}
         order={isSender ? 1 : 2}
         spacing={0}
         px={2.5}
         py={1}
-        bgColor={isSender ? brand.primary : brand.secondary}
+        bgColor={isSender ? colors.primary : colors.secondary}
         borderRadius={10}
         onMouseEnter={() => setIsVisible(true)}
         onMouseLeave={() => !isOpen && setIsVisible(false)}
       >
         {!isSender && !isConsecutive && (
-          <Text alignSelf='flex-start' fontSize='sm' color={brand['text-gray']}>
+          <Text
+            alignSelf='flex-start'
+            fontSize='sm'
+            color={colors['text-gray']}
+          >
             {sender}
           </Text>
         )}
@@ -76,7 +81,7 @@ export const MessageItem = ({
             componentDecorator={(decoratedText: string) => (
               <Link
                 key={Math.random() * 1000}
-                color={brand.link}
+                color={colors.link}
                 _hover={{ textDecor: 'underline' }}
                 target='blank'
                 rel='noreferrer noopener'
@@ -88,8 +93,8 @@ export const MessageItem = ({
           >
             {deleted ? (
               <HStack spacing={0}>
-                <TiCancel fill={brand['text-gray']} size='20px' />
-                <i style={{ color: brand['text-gray'] }}>{content}</i>
+                <TiCancel fill={colors['text-gray']} size='20px' />
+                <i style={{ color: colors['text-gray'] }}>{content}</i>
               </HStack>
             ) : (
               <Text
@@ -101,7 +106,11 @@ export const MessageItem = ({
               </Text>
             )}
           </Linkify>
-          <Text alignSelf='flex-end' fontSize='11px' color={brand['text-gray']}>
+          <Text
+            alignSelf='flex-end'
+            fontSize='11px'
+            color={colors['text-gray']}
+          >
             {time}
           </Text>
           <AnimatePresence>
@@ -115,7 +124,7 @@ export const MessageItem = ({
                 justify='center'
                 p={1}
                 pr={0}
-                bgColor={brand.primary}
+                bgColor={colors.primary}
               >
                 <Menu
                   menuProps={{

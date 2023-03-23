@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, Stack, Text } from '@chakra-ui/react'
+import { Box, Stack } from '@chakra-ui/react'
 
 import { MessageItem } from './MessageItem'
 import { ChatTag } from './ChatTag'
@@ -32,7 +32,9 @@ export const Messages = () => {
   return (
     <SectionWithScroll flexGrow={1} flexShrink={1} py={5} px={10} spacing={0}>
       {isLoading ? (
-        <MessagesLoader />
+        <Stack spacing={5}>
+          <MessagesLoader />
+        </Stack>
       ) : messages?.length ? (
         messages?.map((message, index) => {
           const messageSender = message.user
@@ -64,7 +66,7 @@ export const Messages = () => {
               key={message.id}
             >
               {!sameDateThatLastMessage && (
-                <ChatTag alignSelf='center' mb={4}>
+                <ChatTag alignSelf='center' my={4}>
                   {messageDateTime.isToday()
                     ? 'Hoy'
                     : messageDateTime.formatDate({ dateStyle: 'medium' })}

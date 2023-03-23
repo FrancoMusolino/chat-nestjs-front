@@ -18,7 +18,7 @@ import {
   useAddIntegrantMutation,
 } from '../services/chat.service'
 import { Button } from '@/shared/components/Button'
-import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
+import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 
 const initialValues: AddIntegrantRequest = {
   username: '',
@@ -29,7 +29,7 @@ const validationSchema = Yup.object({
 })
 
 export const AddIntegrantModal = () => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
   const toast = useToast()
   const { onClose } = useModalContext()
 
@@ -63,12 +63,7 @@ export const AddIntegrantModal = () => {
               name='username'
               placeholder='Ingrese el username'
               withIcon
-              icon={
-                <AiOutlineUserAdd
-                  fill={colors.brand['text-gray']}
-                  size='20px'
-                />
-              }
+              icon={<AiOutlineUserAdd fill={colors['text-gray']} size='20px' />}
             />
           </Stack>
 

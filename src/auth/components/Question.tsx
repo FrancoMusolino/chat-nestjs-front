@@ -2,7 +2,7 @@ import React from 'react'
 import { Text } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 
-import { useBrandTheme } from '@/shared/hooks'
+import { useBrandColors } from '@/shared/hooks'
 
 type QuestionProps = {
   question: string
@@ -11,16 +11,16 @@ type QuestionProps = {
 }
 
 export const Question = ({ question, to, linkTxt }: QuestionProps) => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   const navigate = useNavigate()
 
   return (
-    <Text fontSize='sm' color={colors.brand['text-gray']} userSelect='none'>
+    <Text fontSize='sm' color={colors['text-gray']} userSelect='none'>
       {question}{' '}
       <Text
         as='span'
-        color={colors.brand.primary}
+        color={colors.primary}
         _hover={{
           textDecor: 'underline',
           cursor: 'pointer',

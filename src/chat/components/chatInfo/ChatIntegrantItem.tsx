@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom'
 import { Badge, HStack, MenuItem, Stack, Text } from '@chakra-ui/react'
 import { BsChevronDown } from 'react-icons/bs'
 
-import { useSelectedChat } from '../hooks/useSelectedChat'
-import { usePushOutIntegrantMutation } from '../services/chat.service'
-import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
+import { useSelectedChat } from '../../hooks/useSelectedChat'
+import { usePushOutIntegrantMutation } from '../../services/chat.service'
+import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { Avatar } from '@/shared/components/Avatar'
 import { Menu } from '@/shared/components/Menu'
 import { Alert } from '@/shared/components/Alert'
@@ -29,9 +29,7 @@ export const ChatIntegrantItem = ({
   isCreator,
   showMenu = false,
 }: ChatIntegrantItemProps) => {
-  const {
-    colors: { brand },
-  } = useBrandTheme()
+  const { colors } = useBrandColors()
 
   const { chatId } = useParams()
   const { selectedChat } = useSelectedChat(chatId!)
@@ -84,15 +82,24 @@ export const ChatIntegrantItem = ({
               </Menu>
             )}
           </HStack>
-          <Text fontSize='xs' lineHeight={1} color={brand['text-gray']}>
+          <Text
+            maxW='130px'
+            fontSize='xs'
+            lineHeight={1}
+            color={colors['text-gray']}
+            whiteSpace='nowrap'
+            overflow='hidden'
+            textOverflow='ellipsis'
+          >
             {status}
           </Text>
         </Stack>
       </HStack>
-      <HStack spacing={3}>
+      <Stack spacing={1} alignItems='flex-end'>
         {isCreator && (
           <Badge
-            bgColor={brand.secondary}
+            w='min-content'
+            bgColor={colors.secondary}
             fontSize='xs'
             fontWeight={500}
             textTransform='none'
@@ -103,7 +110,7 @@ export const ChatIntegrantItem = ({
         <Text
           fontSize='xs'
           textTransform='uppercase'
-          color={brand['text-gray']}
+          color={colors['text-gray']}
         >
           {connected
             ? 'En línea'
@@ -111,7 +118,7 @@ export const ChatIntegrantItem = ({
             ? 'hola'
             : 'Nunca se conectó'}
         </Text>
-      </HStack>
+      </Stack>
     </HStack>
   )
 }

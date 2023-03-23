@@ -13,7 +13,7 @@ import { FaLock } from 'react-icons/fa'
 import { OutlineInput } from './OutlineInput'
 
 import { Button } from '@/shared/components/Button'
-import { useBrandTheme, useErrorMessage } from '@/shared/hooks'
+import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import {
   DeleteAccountRequest,
   useDeleteAccountMutation,
@@ -30,7 +30,7 @@ const validationSchema = Yup.object({
 })
 
 export const DeleteAccount = () => {
-  const { colors } = useBrandTheme()
+  const { colors } = useBrandColors()
   const { onClose } = useModalContext()
 
   const { id } = useStoreSelector('session')
@@ -62,7 +62,7 @@ export const DeleteAccount = () => {
               type='password'
               placeholder='Para confirmar, ingrese su contraseña'
               withIcon
-              icon={<FaLock fill={colors.brand['text-gray']} size='15px' />}
+              icon={<FaLock fill={colors['text-gray']} size='15px' />}
             />
           </Stack>
 

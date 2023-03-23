@@ -6,7 +6,7 @@ import { generateArrayWithRandomKeys } from '@/shared/utils'
 export const MessagesLoader = () => {
   return (
     <>
-      {generateArrayWithRandomKeys(6).map((id, index) => {
+      {generateArrayWithRandomKeys(5).map((id, index) => {
         const isSender = index % 2 === 0
 
         return (

@@ -6,10 +6,11 @@ import Linkify from 'react-linkify'
 import { BsChevronDown } from 'react-icons/bs'
 import { TiCancel } from 'react-icons/ti'
 
+import { useDeleteMessageMutation } from '../services/message.service'
 import { Avatar } from '@/shared/components/Avatar'
 import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { Menu } from '@/shared/components/Menu'
-import { useDeleteMessageMutation } from '../services/message.service'
+import { useStoreSelector } from '@/shared/app/store'
 
 type MessageItemProps = {
   isConsecutive: boolean
@@ -37,6 +38,8 @@ export const MessageItem = ({
 
   const { chatId } = useParams()
 
+  const { infoPanelIsVisible } = useStoreSelector('chat')
+
   const [isVisible, setIsVisible] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
@@ -54,7 +57,7 @@ export const MessageItem = ({
         {!isConsecutive && <Avatar src={senderAvatar} boxSize='30px' />}
       </Box>
       <Stack
-        maxW='65%'
+        maxW={infoPanelIsVisible ? '90%' : '65%'}
         order={isSender ? 1 : 2}
         spacing={0}
         px={2.5}

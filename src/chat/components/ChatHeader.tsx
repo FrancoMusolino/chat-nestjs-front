@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Heading, HStack, MenuItem } from '@chakra-ui/react'
 
 import { AddIntegrantModal } from './AddIntegrantModal'
@@ -11,12 +11,13 @@ import { Menu } from '@/shared/components/Menu'
 import { Modal } from '@/shared/components/Modal'
 import { Alert } from '@/shared/components/Alert'
 import { useErrorMessage } from '@/shared/hooks'
-import { useGlobalDispatch } from '@/shared/app/store'
+import { useGlobalDispatch, useStoreSelector } from '@/shared/app/store'
 import { changeInfoPanelVisibility } from '@/shared/features/chat/chat.actions'
 
 export const ChatHeader = () => {
   const { chatId } = useParams()
 
+  const { infoPanelIsVisible } = useStoreSelector('chat')
   const dispatch = useGlobalDispatch()
 
   const { selectedChat } = useSelectedChat(chatId!)
@@ -28,7 +29,14 @@ export const ChatHeader = () => {
     <Header>
       <HStack spacing={3}>
         <Avatar src={selectedChat?.avatar} isGroupPicture />
-        <Heading fontSize='lg' fontWeight={500}>
+        <Heading
+          fontSize='lg'
+          fontWeight={500}
+          whiteSpace='nowrap'
+          overflow='hidden'
+          textOverflow='ellipsis'
+          maxW={infoPanelIsVisible ? '370px' : 'auto'}
+        >
           {selectedChat?.title}
         </Heading>
       </HStack>

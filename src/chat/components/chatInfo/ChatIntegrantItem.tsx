@@ -82,7 +82,15 @@ export const ChatIntegrantItem = ({
               </Menu>
             )}
           </HStack>
-          <Text fontSize='xs' lineHeight={1} color={colors['text-gray']}>
+          <Text
+            maxW='130px'
+            fontSize='xs'
+            lineHeight={1}
+            color={colors['text-gray']}
+            whiteSpace='nowrap'
+            overflow='hidden'
+            textOverflow='ellipsis'
+          >
             {status}
           </Text>
         </Stack>

@@ -30,7 +30,7 @@ export const ChatIntegrants = () => {
           : '1 participante'}
       </Text>
 
-      <Stack spacing={5}>
+      <Stack spacing={isLoading ? 3 : 5}>
         {isLoading ? (
           <ChatIntegrantLoader />
         ) : (
@@ -44,50 +44,12 @@ export const ChatIntegrants = () => {
                 username='Tú'
               />
             ) : (
-              <>
-                <ChatIntegrantItem
-                  key={user.id}
-                  isCreator={user.username === chatCreator}
-                  showMenu={stateUser.username === chatCreator}
-                  {...user}
-                />
-                <ChatIntegrantItem
-                  key={user.id}
-                  isCreator={user.username === chatCreator}
-                  showMenu={stateUser.username === chatCreator}
-                  {...user}
-                />
-                <ChatIntegrantItem
-                  key={user.id}
-                  isCreator={user.username === chatCreator}
-                  showMenu={stateUser.username === chatCreator}
-                  {...user}
-                />
-                <ChatIntegrantItem
-                  key={user.id}
-                  isCreator={user.username === chatCreator}
-                  showMenu={stateUser.username === chatCreator}
-                  {...user}
-                />
-                <ChatIntegrantItem
-                  key={user.id}
-                  isCreator={user.username === chatCreator}
-                  showMenu={stateUser.username === chatCreator}
-                  {...user}
-                />
-                <ChatIntegrantItem
-                  key={user.id}
-                  isCreator={user.username === chatCreator}
-                  showMenu={stateUser.username === chatCreator}
-                  {...user}
-                />
-                <ChatIntegrantItem
-                  key={user.id}
-                  isCreator={user.username === chatCreator}
-                  showMenu={stateUser.username === chatCreator}
-                  {...user}
-                />
-              </>
+              <ChatIntegrantItem
+                key={user.id}
+                isCreator={user.username === chatCreator}
+                showMenu={stateUser.username === chatCreator}
+                {...user}
+              />
             )
           )
         )}

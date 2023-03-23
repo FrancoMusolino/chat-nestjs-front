@@ -1,14 +1,22 @@
 import React from 'react'
 import { HStack } from '@chakra-ui/react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion, Variants } from 'framer-motion'
 
 import { ChatLayout } from '../layout/ChatLayout'
 import { ChatHeader } from '../components/ChatHeader'
 import { SubmitMessage } from '../components/SubmitMessage'
 import { Messages } from '../components/Messages'
+import { ChatInfo } from '../components/chatInfo/ChatInfo'
 
 import { useStoreSelector } from '@/shared/app/store'
-import { ChatInfo } from '../components/chatInfo/ChatInfo'
+
+export const containerVariants: Variants = {
+  open: {
+    minWidth: '400px',
+    transition: { type: 'spring', stiffness: 175, damping: 24 },
+  },
+  closed: { minWidth: 0, width: 0, transition: { duration: 0.3 } },
+}
 
 export const Chat = () => {
   const { infoPanelIsVisible } = useStoreSelector('chat')
@@ -20,18 +28,13 @@ export const Chat = () => {
         <Messages />
         <SubmitMessage />
       </ChatLayout>
-      <AnimatePresence>
-        {infoPanelIsVisible && (
-          <motion.div
-            // layout
-            initial={{ width: 0 }}
-            animate={{ width: '400px' }}
-            exit={{ width: 0 }}
-          >
-            <ChatInfo />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <motion.nav
+        initial={false}
+        animate={infoPanelIsVisible ? 'open' : 'closed'}
+        variants={containerVariants}
+      >
+        <ChatInfo />
+      </motion.nav>
     </HStack>
   )
 }

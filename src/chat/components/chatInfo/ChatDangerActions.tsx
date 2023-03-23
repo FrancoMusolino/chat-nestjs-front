@@ -1,27 +1,27 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { HStack, Stack, Text } from '@chakra-ui/react'
+import { Stack, Text } from '@chakra-ui/react'
 
-import { useSelectedChat } from '../hooks/useSelectedChat'
+import { useSelectedChat } from '../../hooks/useSelectedChat'
 import {
   useDeleteChatMutation,
+  useGetChat,
   useLeaveChatMutation,
-} from '../services/chat.service'
+} from '../../services/chat.service'
 import { Button } from '@/shared/components/Button'
 import { Alert } from '@/shared/components/Alert'
 import { useBrandColors, useErrorMessage } from '@/shared/hooks'
+import { useStoreSelector } from '@/shared/app/store'
 
-type ChatDangerActionsProps = {
-  /**@default false */
-  showDeleteChatBtn?: boolean
-}
-
-export const ChatDangerActions = ({
-  showDeleteChatBtn = false,
-}: ChatDangerActionsProps) => {
+export const ChatDangerActions = () => {
   const { colors } = useBrandColors()
 
   const { chatId } = useParams()
+
+  const { username } = useStoreSelector('session')
+
+  const { data } = useGetChat(chatId!)
+  const chatCreator = data?.data.createdBy
 
   const { mutate: deleteChat, error: deleteChatError } = useDeleteChatMutation(
     chatId!
@@ -36,8 +36,20 @@ export const ChatDangerActions = ({
   const { selectedChat } = useSelectedChat(chatId!)
 
   return (
-    <HStack spacing={5} alignSelf='flex-end'>
-      {showDeleteChatBtn && (
+    <Stack spacing={5} maxW='65%' mx='auto'>
+      <Alert
+        trigger={Button}
+        triggerText='Salir del grupo'
+        triggerProps={{
+          btnType: 'danger',
+          fontSize: '15px',
+          px: 10,
+        }}
+        alertTitle={`¿Deseas salir del grupo “${selectedChat?.title}”?`}
+        btnText='Salir del grupo'
+        action={leaveChat}
+      />
+      {chatCreator === username && (
         <Alert
           trigger={Button}
           triggerText='Eliminar Grupo'
@@ -64,18 +76,6 @@ export const ChatDangerActions = ({
           action={deleteChat}
         />
       )}
-      <Alert
-        trigger={Button}
-        triggerText='Salir del grupo'
-        triggerProps={{
-          btnType: 'danger',
-          fontSize: '15px',
-          px: 10,
-        }}
-        alertTitle={`¿Deseas salir del grupo “${selectedChat?.title}”?`}
-        btnText='Salir del grupo'
-        action={leaveChat}
-      />
-    </HStack>
+    </Stack>
   )
 }

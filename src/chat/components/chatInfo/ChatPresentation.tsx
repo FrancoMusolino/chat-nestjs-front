@@ -15,7 +15,11 @@ export const ChatPresentation = () => {
     <Stack align='center' spacing={4} px={6}>
       <Avatar src={selectedChat?.avatar} boxSize='170px' isGroupPicture />
       <Stack spacing={0} align='center' textAlign='center'>
-        <EditableField value={selectedChat?.title} inputMaxLength={35} />
+        <EditableField
+          value={selectedChat?.title}
+          fieldToUpdate='title'
+          inputMaxLength={35}
+        />
       </Stack>
     </Stack>
   )

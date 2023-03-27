@@ -21,6 +21,9 @@ export type GetUserChatsResponse = {
   chats: {
     id: string
     title: string
+    createdAt: Date
+    createdBy: string
+    description?: string
     avatar?: string
     messages: {
       content: string

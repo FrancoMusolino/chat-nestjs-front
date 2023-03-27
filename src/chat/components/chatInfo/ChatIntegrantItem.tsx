@@ -57,6 +57,7 @@ export const ChatIntegrantItem = ({
                 menuProps={{
                   computePositionOnMount: true,
                   closeOnSelect: false,
+                  strategy: 'fixed',
                 }}
                 icon={BsChevronDown}
                 menuButtonStyle={{
@@ -65,7 +66,7 @@ export const ChatIntegrantItem = ({
                   _active: {
                     bgColor: 'initial',
                   },
-                  onClick: () => setIsOpen(true),
+                  onClick: () => setIsOpen(!isOpen),
                 }}
               >
                 <Alert
@@ -75,8 +76,8 @@ export const ChatIntegrantItem = ({
                   btnText='Expulsar'
                   action={() => pushOut({ username })}
                   onCloseComplete={() => {
-                    setIsOpen(false)
                     setIsVisible(false)
+                    setIsOpen(false)
                   }}
                 />
               </Menu>

@@ -5,7 +5,6 @@ import { Stack, Text } from '@chakra-ui/react'
 import { useSelectedChat } from '../../hooks/useSelectedChat'
 import {
   useDeleteChatMutation,
-  useGetChat,
   useLeaveChatMutation,
 } from '../../services/chat.service'
 import { Button } from '@/shared/components/Button'
@@ -20,8 +19,8 @@ export const ChatDangerActions = () => {
 
   const { username } = useStoreSelector('session')
 
-  const { data } = useGetChat(chatId!)
-  const chatCreator = data?.data.createdBy
+  const { selectedChat } = useSelectedChat(chatId!)
+  const chatCreator = selectedChat?.createdBy
 
   const { mutate: deleteChat, error: deleteChatError } = useDeleteChatMutation(
     chatId!
@@ -32,8 +31,6 @@ export const ChatDangerActions = () => {
     chatId!
   )
   useErrorMessage(leaveChatError)
-
-  const { selectedChat } = useSelectedChat(chatId!)
 
   return (
     <Stack spacing={5} maxW='65%' mx='auto'>

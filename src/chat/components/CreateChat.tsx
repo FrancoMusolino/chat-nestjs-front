@@ -29,7 +29,7 @@ const validationSchema = Yup.object({
     .trim()
     .max(35, 'Máximo 35 caractéres')
     .required('Campo requerido'),
-  description: Yup.string().trim().max(255, 'Máximo 255 caractéres').optional(),
+  description: Yup.string().trim().optional(),
 })
 
 export const CreateChat = () => {

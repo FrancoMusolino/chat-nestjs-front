@@ -28,13 +28,14 @@ export const Chat = () => {
         <Messages />
         <SubmitMessage />
       </ChatLayout>
-      <motion.nav
+      <motion.div
+        style={{ maxWidth: '400px' }}
         initial={false}
         animate={infoPanelIsVisible ? 'open' : 'closed'}
         variants={containerVariants}
       >
         <ChatInfo />
-      </motion.nav>
+      </motion.div>
     </HStack>
   )
 }

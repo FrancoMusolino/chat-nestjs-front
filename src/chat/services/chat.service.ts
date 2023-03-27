@@ -16,13 +16,6 @@ type Chat = {
   userIDs: string[]
 }
 
-export const useGetChat = (chatId: string) => {
-  return useQuery({
-    queryKey: ['chat', chatId],
-    queryFn: () => axios.get<Chat>(`chat/${chatId}`),
-  })
-}
-
 export type GetChatMessagesResponse = {
   messages: {
     id: string
@@ -219,6 +212,51 @@ export const useDeleteChatMutation = (chatId: string) => {
       }
 
       navigate('/', { replace: true })
+
+      return { previousUserChats }
+    },
+    onError: (_err, _, context) => {
+      queryClient.setQueryData(userChatsQueryKey, context?.previousUserChats)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: userChatsQueryKey })
+    },
+  })
+}
+
+export type UpdateChatRequest = {
+  title?: string
+  description?: string
+  avatar?: string
+}
+
+export const useUpdateChatMutation = (chatId: string) => {
+  const queryClient = useQueryClient()
+
+  const userChatsQueryKey = ['user-chats']
+
+  return useMutation({
+    mutationKey: ['update-chat', chatId],
+    mutationFn: (updatedChat: UpdateChatRequest) =>
+      axios.patch<Chat>(`chat/${chatId}`, updatedChat),
+    onMutate: async (updatedChat) => {
+      type UserChatsResponse = AxiosResponse<GetUserChatsResponse>
+
+      await queryClient.cancelQueries({ queryKey: userChatsQueryKey })
+
+      const previousUserChats =
+        queryClient.getQueryData<UserChatsResponse>(userChatsQueryKey)
+
+      const updatedUserChats = previousUserChats?.data.chats.map((chat) =>
+        chat.id === chatId ? { ...chat, ...updatedChat } : chat
+      )
+
+      if (updatedUserChats) {
+        queryClient.setQueryData<any>(userChatsQueryKey, (old: any) => ({
+          ...old,
+          data: { chats: updatedUserChats },
+        }))
+      }
 
       return { previousUserChats }
     },

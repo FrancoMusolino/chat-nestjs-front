@@ -4,6 +4,7 @@ import { Box, HStack, Text } from '@chakra-ui/react'
 import { MdEdit, MdCheck } from 'react-icons/md'
 
 import { useUpdateChatMutation } from '@/chat/services/chat.service'
+import { LinkifyWrapper } from '@/shared/components/LinkifyWrapper'
 import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { textRangeSelection } from '@/shared/utils'
 import { LINES_BREAK_MORE_THAN_3_CONSECUTIVES } from '@/shared/constants'
@@ -81,14 +82,16 @@ export const ChatDescription = ({ description }: ChatDescriptionProps) => {
           {description}
         </Text>
       ) : description ? (
-        <Text
-          flexGrow={1}
-          fontSize='sm'
-          wordBreak='break-word'
-          whiteSpace='pre-wrap'
-        >
-          {description}
-        </Text>
+        <LinkifyWrapper>
+          <Text
+            flexGrow={1}
+            fontSize='sm'
+            wordBreak='break-word'
+            whiteSpace='pre-wrap'
+          >
+            {description}
+          </Text>
+        </LinkifyWrapper>
       ) : (
         <Text
           flexGrow={1}

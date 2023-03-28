@@ -3,8 +3,8 @@ import { Stack } from '@chakra-ui/react'
 import { useParams } from 'react-router-dom'
 
 import { EditableField } from './EditableField'
+import { ChatPicture } from './ChatPicture'
 import { useSelectedChat } from '../../hooks/useSelectedChat'
-import { Avatar } from '@/shared/components/Avatar'
 
 export const ChatPresentation = () => {
   const { chatId } = useParams()
@@ -13,7 +13,7 @@ export const ChatPresentation = () => {
 
   return (
     <Stack align='center' spacing={4} px={6}>
-      <Avatar src={selectedChat?.avatar} boxSize='170px' isGroupPicture />
+      <ChatPicture />
       <Stack spacing={0} align='center' textAlign='center'>
         <EditableField
           value={selectedChat?.title}

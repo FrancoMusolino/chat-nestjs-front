@@ -67,9 +67,9 @@ export const useSubmitMessageMutation = (chatId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-chats'] })
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: chatMessagesQueryKey })
-    },
+    // onSettled: () => {
+    //   queryClient.invalidateQueries({ queryKey: chatMessagesQueryKey })
+    // },
   })
 }
 
@@ -83,11 +83,8 @@ export const useDeleteMessageMutation = (chatId: string, messageId: string) => {
     onMutate: async () => {
       type ChatMessagesResponse = AxiosResponse<GetChatMessagesResponse>
 
-      // Cancel any outgoing refetches
-      // (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({ queryKey: chatMessagesQueryKey })
 
-      // Snapshot the previous value
       const previousMessages =
         queryClient.getQueryData<ChatMessagesResponse>(chatMessagesQueryKey)
 
@@ -98,14 +95,12 @@ export const useDeleteMessageMutation = (chatId: string, messageId: string) => {
       )
 
       if (updatedMessages) {
-        // Optimistically update to the new value
         queryClient.setQueryData<any>(chatMessagesQueryKey, (old: any) => ({
           ...old,
           data: { messages: updatedMessages },
         }))
       }
 
-      // Return a context object with the snapshotted value
       return { previousMessages }
     },
     onError: (_err, _, context) => {

@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, HStack, Link, MenuItem, Stack, Text } from '@chakra-ui/react'
+import { Box, HStack, MenuItem, Stack, Text } from '@chakra-ui/react'
 import { AnimatePresence, motion } from 'framer-motion'
-import Linkify from 'react-linkify'
 import { BsChevronDown } from 'react-icons/bs'
 import { TiCancel } from 'react-icons/ti'
 
 import { useDeleteMessageMutation } from '../services/message.service'
 import { Avatar } from '@/shared/components/Avatar'
-import { useBrandColors, useErrorMessage } from '@/shared/hooks'
+import { LinkifyWrapper } from '@/shared/components/LinkifyWrapper'
 import { Menu } from '@/shared/components/Menu'
+import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { useStoreSelector } from '@/shared/app/store'
 
 type MessageItemProps = {
@@ -77,20 +77,7 @@ export const MessageItem = ({
           </Text>
         )}
         <HStack pos='relative'>
-          <Linkify
-            componentDecorator={(decoratedText: string) => (
-              <Link
-                key={Math.random() * 1000}
-                color={colors.link}
-                _hover={{ textDecor: 'underline' }}
-                target='blank'
-                rel='noreferrer noopener'
-                href={decoratedText}
-              >
-                {decoratedText}
-              </Link>
-            )}
-          >
+          <LinkifyWrapper>
             {deleted ? (
               <HStack spacing={0}>
                 <TiCancel fill={colors['text-gray']} size='20px' />
@@ -105,7 +92,7 @@ export const MessageItem = ({
                 {content}
               </Text>
             )}
-          </Linkify>
+          </LinkifyWrapper>
           <Text
             alignSelf='flex-end'
             fontSize='11px'

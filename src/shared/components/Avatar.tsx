@@ -5,7 +5,7 @@ import {
   StyleProps,
 } from '@chakra-ui/react'
 
-type AvatarProps = StyleProps &
+export type AvatarProps = StyleProps &
   ChakraAvatarProps & {
     /**@default false */
     isGroupPicture?: boolean

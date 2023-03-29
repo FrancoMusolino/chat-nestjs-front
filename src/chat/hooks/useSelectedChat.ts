@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { AxiosResponse } from 'axios'
 import { useQueryClient, useIsMutating } from '@tanstack/react-query'
 
 import { GetUserChatsResponse } from '@/shared/services/user.service'
@@ -12,12 +11,12 @@ export const useSelectedChat = (chatId: string) => {
 
   const [selectedChat, setSelectedChat] = useState<null | SelectedChat>(null)
 
-  const { data } = queryClient.getQueryData([
+  const { chats } = queryClient.getQueryData([
     'user-chats',
-  ]) as AxiosResponse<GetUserChatsResponse>
+  ]) as GetUserChatsResponse
 
   useEffect(() => {
-    setSelectedChat(data.chats.find((chat) => chat.id === chatId) || null)
+    setSelectedChat(chats.find((chat) => chat.id === chatId) || null)
   }, [isMutatingUserChats, chatId])
 
   return { selectedChat }

@@ -30,16 +30,21 @@ const validationSchema = Yup.object({
 
 export const AddIntegrantModal = () => {
   const { colors } = useBrandColors()
+
   const toast = useToast()
   const { onClose } = useModalContext()
 
   const { chatId } = useParams()
 
-  const { mutate, error, isLoading } = useAddIntegrantMutation(chatId!)
+  const {
+    mutate: addIntegrant,
+    error,
+    isLoading,
+  } = useAddIntegrantMutation(chatId!)
   useErrorMessage(error)
 
   const handleSubmit = (newIntegrant: AddIntegrantRequest) => {
-    return mutate(newIntegrant, {
+    return addIntegrant(newIntegrant, {
       onSuccess: () => {
         onClose()
         toast({

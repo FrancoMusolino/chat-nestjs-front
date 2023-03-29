@@ -11,7 +11,7 @@ import { Button } from '@/shared/components/Button'
 import { Modal } from '@/shared/components/Modal'
 
 export const ProfileSettings = () => {
-  const { username, status } = useStoreSelector('session')
+  const { username } = useStoreSelector('session')
 
   return (
     <Stack spacing={10} py={10} px={5}>

@@ -35,11 +35,11 @@ const validationSchema = Yup.object({
 export const CreateChat = () => {
   const { onClose } = useModalContext()
 
-  const { mutate, isLoading, error } = useCreateChatMutation()
+  const { mutate: createChat, isLoading, error } = useCreateChatMutation()
   useErrorMessage(error)
 
   const handleSubmit = (newChat: CreateChatRequest) => {
-    return mutate(newChat, {
+    return createChat(newChat, {
       onSuccess: () => {
         onClose()
       },

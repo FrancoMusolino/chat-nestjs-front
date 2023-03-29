@@ -17,8 +17,8 @@ export const ChatIntegrants = () => {
 
   const { data, isLoading } = useGetChatIntegrants(chatId!)
 
-  const users = data?.data.users
-  const chatCreator = data?.data.createdBy
+  const users = data?.users
+  const chatCreator = data?.createdBy
 
   return (
     <Stack px={6} spacing={4}>

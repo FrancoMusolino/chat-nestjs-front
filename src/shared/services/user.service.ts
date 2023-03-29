@@ -38,7 +38,8 @@ export type GetUserChatsResponse = {
 export const useGetUserChats = (userId: string) => {
   return useQuery({
     queryKey: ['user-chats'],
-    queryFn: () => axios.get<GetUserChatsResponse>(`users/${userId}/chats`),
+    queryFn: () =>
+      axios.get<unknown, GetUserChatsResponse>(`users/${userId}/chats`),
     refetchInterval: REFETCH_INTERVAL,
   })
 }
@@ -52,7 +53,7 @@ export const useUpdateUserMutation = (userId: string) => {
   return useMutation({
     mutationKey: ['update-user'],
     mutationFn: (updatedUser: UpdateUserRequest) =>
-      axios.patch<User>(`users/${userId}`, updatedUser),
+      axios.patch<unknown, User>(`users/${userId}`, updatedUser),
   })
 }
 
@@ -66,7 +67,7 @@ export const useDeleteAccountMutation = (userId: string) => {
   return useMutation({
     mutationKey: ['delete-account'],
     mutationFn: (data: DeleteAccountRequest) =>
-      axios.delete(`users/${userId}`, { data }),
+      axios.delete<unknown, User>(`users/${userId}`, { data }),
     onSuccess: () => {
       queryClient.clear()
     },

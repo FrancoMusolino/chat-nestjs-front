@@ -32,7 +32,7 @@ export const SettingsEditableInput = ({
   const [value, setValue] = useState(status)
   const [visible, setVisible] = useState(false)
 
-  const { mutate, error } = useUpdateUserMutation(id)
+  const { mutate: updateUser, error } = useUpdateUserMutation(id)
   useErrorMessage(error)
 
   const handleChange = (nextValue: string) => {
@@ -49,7 +49,7 @@ export const SettingsEditableInput = ({
       return
     }
 
-    return mutate(
+    return updateUser(
       { status: nextValue },
       {
         onSuccess: () => {

@@ -1,5 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { AxiosResponse } from 'axios'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 
 import { axios } from '@/shared/services/axios'
@@ -28,13 +32,33 @@ export type GetChatMessagesResponse = {
       profilePicture?: string
     }
   }[]
+  hasNextPage: boolean
 }
 
+// export const useGetChatMessages = (chatId: string) => {
+//   return useQuery({
+//     queryKey: ['chat-messages', chatId],
+//     queryFn: () =>
+//       axios.get<GetChatMessagesResponse>(`chat/${chatId}/mensajes`),
+//   })
+// }
+
 export const useGetChatMessages = (chatId: string) => {
-  return useQuery({
+  const TAKE = 50
+
+  return useInfiniteQuery({
     queryKey: ['chat-messages', chatId],
-    queryFn: () =>
-      axios.get<GetChatMessagesResponse>(`chat/${chatId}/mensajes`),
+    queryFn: ({ pageParam = 1 }) =>
+      axios.get<unknown, GetChatMessagesResponse>(
+        `chat/${chatId}/mensajes?take=${TAKE}&skip=${-TAKE + pageParam * TAKE}`
+      ),
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.hasNextPage) {
+        return undefined
+      }
+
+      return allPages.length + 1
+    },
   })
 }
 
@@ -54,7 +78,9 @@ export const useGetChatIntegrants = (chatId: string) => {
   return useQuery({
     queryKey: ['chat-integrants', chatId],
     queryFn: () =>
-      axios.get<GetChatIntegrantsResponse>(`chat/${chatId}/integrantes`),
+      axios.get<unknown, GetChatIntegrantsResponse>(
+        `chat/${chatId}/integrantes`
+      ),
   })
 }
 
@@ -66,12 +92,14 @@ export type CreateChatRequest = {
 export const useCreateChatMutation = () => {
   const queryClient = useQueryClient()
 
+  const userChatsQueryKey = ['user-chats']
+
   return useMutation({
     mutationKey: ['create-chat'],
     mutationFn: (newChat: CreateChatRequest) =>
-      axios.post<Chat>(`chat`, newChat),
+      axios.post<unknown, Chat>(`chat`, newChat),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-chats'] })
+      queryClient.invalidateQueries({ queryKey: userChatsQueryKey })
     },
   })
 }
@@ -86,7 +114,10 @@ export const useAddIntegrantMutation = (chatId: string) => {
   return useMutation({
     mutationKey: ['add-integrant', chatId],
     mutationFn: (newIntegrant: AddIntegrantRequest) =>
-      axios.post<Chat>(`chat/${chatId}/sumar-integrante`, newIntegrant),
+      axios.post<unknown, Chat>(
+        `chat/${chatId}/sumar-integrante`,
+        newIntegrant
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['chat-integrants', chatId] })
     },
@@ -94,31 +125,33 @@ export const useAddIntegrantMutation = (chatId: string) => {
 }
 
 export const useLeaveChatMutation = (chatId: string) => {
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const userChatsQueryKey = ['user-chats']
 
   return useMutation({
     mutationKey: ['leave-chat', chatId],
-    mutationFn: () => axios.post<Chat>(`chat/${chatId}/abandonar-chat`),
+    mutationFn: () =>
+      axios.post<unknown, Chat>(`chat/${chatId}/abandonar-chat`),
     onMutate: async () => {
-      type UserChatsResponse = AxiosResponse<GetUserChatsResponse>
-
       await queryClient.cancelQueries({ queryKey: userChatsQueryKey })
 
       const previousUserChats =
-        queryClient.getQueryData<UserChatsResponse>(userChatsQueryKey)
+        queryClient.getQueryData<GetUserChatsResponse>(userChatsQueryKey)
 
-      const updatedUserChats = previousUserChats?.data.chats.filter(
+      const updatedUserChats = previousUserChats?.chats.filter(
         (chat) => chat.id !== chatId
       )
 
       if (updatedUserChats) {
-        queryClient.setQueryData<any>(userChatsQueryKey, (old: any) => ({
-          ...old,
-          data: { chats: updatedUserChats },
-        }))
+        queryClient.setQueryData<GetUserChatsResponse>(
+          userChatsQueryKey,
+          (old: any) => ({
+            ...old,
+            chats: updatedUserChats,
+          })
+        )
       }
 
       navigate('/', { replace: true })
@@ -146,24 +179,27 @@ export const usePushOutIntegrantMutation = (chatId: string) => {
   return useMutation({
     mutationKey: ['push-out-integrant', chatId],
     mutationFn: (data: PushOutIntegrantRequest) =>
-      axios.post<Chat>(`chat/${chatId}/expulsar-chat`, data),
+      axios.post<unknown, Chat>(`chat/${chatId}/expulsar-chat`, data),
     onMutate: async ({ username }) => {
-      type ChatIntegrantsResponse = AxiosResponse<GetChatIntegrantsResponse>
-
       await queryClient.cancelQueries({ queryKey: chatIntegrantsQueryKey })
 
       const previousChatIntegrants =
-        queryClient.getQueryData<ChatIntegrantsResponse>(chatIntegrantsQueryKey)
+        queryClient.getQueryData<GetChatIntegrantsResponse>(
+          chatIntegrantsQueryKey
+        )
 
-      const updatedChatIntegrants = previousChatIntegrants?.data.users.filter(
+      const updatedChatIntegrants = previousChatIntegrants?.users.filter(
         (user) => user.username !== username
       )
 
       if (updatedChatIntegrants) {
-        queryClient.setQueryData<any>(chatIntegrantsQueryKey, (old: any) => ({
-          ...old,
-          data: { ...old.data, users: updatedChatIntegrants },
-        }))
+        queryClient.setQueryData<GetChatIntegrantsResponse>(
+          chatIntegrantsQueryKey,
+          (old: any) => ({
+            ...old,
+            users: updatedChatIntegrants,
+          })
+        )
       }
 
       return { previousChatIntegrants }
@@ -174,9 +210,6 @@ export const usePushOutIntegrantMutation = (chatId: string) => {
         context?.previousChatIntegrants
       )
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['chat', chatId] })
-    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: chatIntegrantsQueryKey })
     },
@@ -184,31 +217,32 @@ export const usePushOutIntegrantMutation = (chatId: string) => {
 }
 
 export const useDeleteChatMutation = (chatId: string) => {
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const userChatsQueryKey = ['user-chats']
 
   return useMutation({
     mutationKey: ['delete-chat', chatId],
-    mutationFn: () => axios.delete<Chat>(`chat/${chatId}`),
+    mutationFn: () => axios.delete<unknown, Chat>(`chat/${chatId}`),
     onMutate: async () => {
-      type UserChatsResponse = AxiosResponse<GetUserChatsResponse>
-
       await queryClient.cancelQueries({ queryKey: userChatsQueryKey })
 
       const previousUserChats =
-        queryClient.getQueryData<UserChatsResponse>(userChatsQueryKey)
+        queryClient.getQueryData<GetUserChatsResponse>(userChatsQueryKey)
 
-      const updatedUserChats = previousUserChats?.data.chats.filter(
+      const updatedUserChats = previousUserChats?.chats.filter(
         (chat) => chat.id !== chatId
       )
 
       if (updatedUserChats) {
-        queryClient.setQueryData<any>(userChatsQueryKey, (old: any) => ({
-          ...old,
-          data: { chats: updatedUserChats },
-        }))
+        queryClient.setQueryData<GetUserChatsResponse>(
+          userChatsQueryKey,
+          (old: any) => ({
+            ...old,
+            chats: updatedUserChats,
+          })
+        )
       }
 
       navigate('/', { replace: true })
@@ -238,25 +272,24 @@ export const useUpdateChatMutation = (chatId: string) => {
   return useMutation({
     mutationKey: ['update-chat', chatId],
     mutationFn: (updatedChat: UpdateChatRequest) =>
-      axios.patch<Chat>(`chat/${chatId}`, updatedChat),
+      axios.patch<unknown, Chat>(`chat/${chatId}`, updatedChat),
     onMutate: async (updatedChat) => {
-      type UserChatsResponse = AxiosResponse<GetUserChatsResponse>
-
       await queryClient.cancelQueries({ queryKey: userChatsQueryKey })
 
       const previousUserChats =
-        queryClient.getQueryData<UserChatsResponse>(userChatsQueryKey)
+        queryClient.getQueryData<GetUserChatsResponse>(userChatsQueryKey)
 
-      const updatedUserChats = previousUserChats?.data.chats.map((chat) =>
+      const updatedUserChats = previousUserChats?.chats.map((chat) =>
         chat.id === chatId ? { ...chat, ...updatedChat } : chat
       )
 
-      if (updatedUserChats) {
-        queryClient.setQueryData<any>(userChatsQueryKey, (old: any) => ({
+      queryClient.setQueryData<GetUserChatsResponse>(
+        userChatsQueryKey,
+        (old: any) => ({
           ...old,
-          data: { chats: updatedUserChats },
-        }))
-      }
+          chats: updatedUserChats,
+        })
+      )
 
       return { previousUserChats }
     },

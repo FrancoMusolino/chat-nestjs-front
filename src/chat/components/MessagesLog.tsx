@@ -5,23 +5,11 @@ import { ChatTag } from './ChatTag'
 import { MessageItem } from './MessageItem'
 import { DateTime } from '@/shared/helpers'
 import { useStoreSelector } from '@/shared/app/store'
+import { GetChatMessagesResponse } from '../services/chat.service'
 
-type MessagePageProps = {
-  messages: {
-    id: string
-    content: string
-    createdAt: Date
-    deleted: boolean
-    withDateTag: boolean
-    user: {
-      id: string
-      username: string
-      profilePicture?: string
-    }
-  }[]
-}
+type MessagePageProps = { messages: GetChatMessagesResponse['messages'] }
 
-export const MessagesPage = ({ messages }: MessagePageProps) => {
+export const MessagesLog = ({ messages }: MessagePageProps) => {
   const { id, profilePicture } = useStoreSelector('session')
 
   return (
@@ -39,16 +27,23 @@ export const MessagesPage = ({ messages }: MessagePageProps) => {
           timeStyle: 'short',
         })
 
+        const sameDateThatLastMessage: boolean = Boolean(
+          index &&
+            messageDateTime.dayDiff(
+              DateTime.createFromDate(messages![index - 1].createdAt)
+            ) === 0
+        )
+
         return (
           <Stack
             mt={
-              (isConsecutive && !message.withDateTag) || !index
+              (isConsecutive && sameDateThatLastMessage) || !index
                 ? `${1} !important`
                 : `${4} !important`
             }
             key={message.id}
           >
-            {message.withDateTag && (
+            {!sameDateThatLastMessage && (
               <ChatTag alignSelf='center' my={4}>
                 {messageDateTime.isToday()
                   ? 'Hoy'
@@ -65,7 +60,7 @@ export const MessagesPage = ({ messages }: MessagePageProps) => {
               }
               time={time}
               isSender={isSender}
-              isConsecutive={!!isConsecutive && !message.withDateTag}
+              isConsecutive={!!isConsecutive && sameDateThatLastMessage}
             />
           </Stack>
         )

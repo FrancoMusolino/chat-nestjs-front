@@ -87,25 +87,29 @@ export const useDeleteMessageMutation = (chatId: string, messageId: string) => {
     mutationKey: ['delete-message', messageId],
     mutationFn: () => axios.delete<unknown, Message>(`messages/${messageId}`),
     onMutate: async () => {
-      type ChatMessagesResponse = AxiosResponse<GetChatMessagesResponse>
-
       await queryClient.cancelQueries({ queryKey: chatMessagesQueryKey })
 
       const previousMessages =
-        queryClient.getQueryData<ChatMessagesResponse>(chatMessagesQueryKey)
+        queryClient.getQueryData<InfiniteData<GetChatMessagesResponse>>(
+          chatMessagesQueryKey
+        )
 
-      const updatedMessages = previousMessages?.data.messages.map((message) =>
-        message.id === messageId
-          ? { ...message, content: 'Mensaje eliminado', deleted: true }
-          : message
-      )
+      const updatedMessages = previousMessages?.pages.map((page) => ({
+        ...page,
+        messages: page.messages.map((message) =>
+          message.id === messageId
+            ? { ...message, content: 'Mensaje eliminado', deleted: true }
+            : message
+        ),
+      }))
 
-      if (updatedMessages) {
-        queryClient.setQueryData<any>(chatMessagesQueryKey, (old: any) => ({
+      queryClient.setQueryData<InfiniteData<GetChatMessagesResponse>>(
+        chatMessagesQueryKey,
+        (old: any) => ({
           ...old,
-          data: { messages: updatedMessages },
-        }))
-      }
+          pages: updatedMessages,
+        })
+      )
 
       return { previousMessages }
     },

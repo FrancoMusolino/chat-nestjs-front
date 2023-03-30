@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
-import { AnimatePresence } from 'framer-motion'
 import { useParams } from 'react-router-dom'
 import { useIsMutating } from '@tanstack/react-query'
 import { Box, Stack } from '@chakra-ui/react'
+import { AnimatePresence } from 'framer-motion'
 
 import { ChatTag } from './ChatTag'
+import { MessagesLog } from './MessagesLog'
 import { MessagesLoader } from './loaders/MessagesLoader'
 import {
   GetChatMessagesResponse,
   useGetChatMessages,
 } from '../services/chat.service'
 import { SectionWithScroll } from '@/shared/components/SectionWithScroll'
-import { MessagesPage } from './MessagesPage'
-import { DateTime } from '@/shared/helpers'
 import { MessagesNextPageLoader } from './loaders/MessagesNextPageLoader'
 
 type Messages = GetChatMessagesResponse['messages']
@@ -34,29 +33,7 @@ export const Messages = () => {
       .reverse()
       .map((page) => ({ ...page, messages: [...page.messages].reverse() }))
 
-    return reverseMessagePages.map((page, pageIndex) =>
-      page.messages.map((message, messageIndex) => {
-        const messageDateTime = DateTime.createFromDate(message.createdAt)
-
-        const isTheFirstMessage: boolean = !pageIndex && !messageIndex
-
-        const sameDateThatLastMessage: boolean = Boolean(
-          !isTheFirstMessage &&
-            messageDateTime.dayDiff(
-              DateTime.createFromDate(
-                messageIndex
-                  ? page.messages![messageIndex - 1].createdAt
-                  : reverseMessagePages[pageIndex - 1].messages.at(-1)!
-                      .createdAt
-              )
-            ) === 0
-        )
-
-        return sameDateThatLastMessage
-          ? { ...message, withDateTag: false }
-          : { ...message, withDateTag: true }
-      })
-    )
+    return reverseMessagePages.map((page) => page.messages).flat()
   }, [messagesPages])
 
   useEffect(() => {
@@ -81,17 +58,17 @@ export const Messages = () => {
     }
   }, [messagesContainerRef.current, hasNextPage])
 
+  const isMutatingChatMessages = useIsMutating({
+    mutationKey: ['submit-message', chatId],
+  })
+
   useEffect(() => {
     const msgContainer = messagesContainerRef.current
 
     msgContainer?.scrollTo(0, msgContainer!.scrollHeight - prevTotalHeight)
 
     setPrevTotalHeight(msgContainer?.scrollHeight || 0)
-  }, [messagesPages])
-
-  const isMutatingChatMessages = useIsMutating({
-    mutationKey: ['submit-message', chatId],
-  })
+  }, [messagesPages?.length])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView()
@@ -122,10 +99,8 @@ export const Messages = () => {
         <Stack spacing={5}>
           <MessagesLoader />
         </Stack>
-      ) : orderedMessagesPages![0]?.length ? (
-        orderedMessagesPages.map((messages, i) => (
-          <MessagesPage key={i} messages={messages} />
-        ))
+      ) : orderedMessagesPages.length ? (
+        <MessagesLog messages={orderedMessagesPages} />
       ) : (
         <ChatTag alignSelf='center' textTransform='none'>
           Chat sin mensajes 😢. Que esperás para comenzar a enviarlos!!

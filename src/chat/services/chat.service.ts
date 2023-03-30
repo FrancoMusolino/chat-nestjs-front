@@ -35,14 +35,6 @@ export type GetChatMessagesResponse = {
   hasNextPage: boolean
 }
 
-// export const useGetChatMessages = (chatId: string) => {
-//   return useQuery({
-//     queryKey: ['chat-messages', chatId],
-//     queryFn: () =>
-//       axios.get<GetChatMessagesResponse>(`chat/${chatId}/mensajes`),
-//   })
-// }
-
 export const useGetChatMessages = (chatId: string) => {
   const TAKE = 50
 

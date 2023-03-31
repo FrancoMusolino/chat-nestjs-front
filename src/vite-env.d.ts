@@ -7,6 +7,7 @@ interface ImportMetaEnv {
   readonly VITE_CLOUDINARY_UPLOAD_PRESET_USERS: string
   readonly VITE_CLOUDINARY_UPLOAD_PRESET_CHATS: string
   readonly VITE_NOVU_APP_IDENTIFIER: string
+  readonly VITE_SOCKET_SERVER: string
   // more env variables...
 }
 

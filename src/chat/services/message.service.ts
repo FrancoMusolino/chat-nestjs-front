@@ -1,4 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  InfiniteData,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { AxiosResponse } from 'axios'
 
 import { axios } from '@/shared/services/axios'
@@ -30,14 +34,14 @@ export const useSubmitMessageMutation = (chatId: string) => {
   return useMutation({
     mutationKey: ['submit-message', chatId],
     mutationFn: (newMessage: SubmitMessageRequest) =>
-      axios.post<Message>(`chat/${chatId}/enviar-mensaje`, newMessage),
+      axios.post<unknown, Message>(`chat/${chatId}/enviar-mensaje`, newMessage),
     onMutate: async (newMessageReq) => {
-      type ChatMessagesResponse = AxiosResponse<GetChatMessagesResponse>
-
       await queryClient.cancelQueries({ queryKey: chatMessagesQueryKey })
 
       const previousMessages =
-        queryClient.getQueryData<ChatMessagesResponse>(chatMessagesQueryKey)
+        queryClient.getQueryData<InfiniteData<GetChatMessagesResponse>>(
+          chatMessagesQueryKey
+        )
 
       const newMessage = {
         id: randomKeyGenerator(),
@@ -51,11 +55,13 @@ export const useSubmitMessageMutation = (chatId: string) => {
         },
       }
 
-      queryClient.setQueryData<ChatMessagesResponse>(
+      queryClient.setQueryData<InfiniteData<GetChatMessagesResponse>>(
         chatMessagesQueryKey,
         (old: any) => ({
           ...old,
-          data: { messages: [...old.data.messages, newMessage] },
+          pages: old.pages.map((page: any, i: number) =>
+            i ? page : { ...page, messages: [newMessage, ...page.messages] }
+          ),
         })
       )
 
@@ -67,9 +73,9 @@ export const useSubmitMessageMutation = (chatId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-chats'] })
     },
-    // onSettled: () => {
-    //   queryClient.invalidateQueries({ queryKey: chatMessagesQueryKey })
-    // },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: chatMessagesQueryKey })
+    },
   })
 }
 
@@ -79,27 +85,31 @@ export const useDeleteMessageMutation = (chatId: string, messageId: string) => {
 
   return useMutation({
     mutationKey: ['delete-message', messageId],
-    mutationFn: () => axios.delete<Message>(`messages/${messageId}`),
+    mutationFn: () => axios.delete<unknown, Message>(`messages/${messageId}`),
     onMutate: async () => {
-      type ChatMessagesResponse = AxiosResponse<GetChatMessagesResponse>
-
       await queryClient.cancelQueries({ queryKey: chatMessagesQueryKey })
 
       const previousMessages =
-        queryClient.getQueryData<ChatMessagesResponse>(chatMessagesQueryKey)
+        queryClient.getQueryData<InfiniteData<GetChatMessagesResponse>>(
+          chatMessagesQueryKey
+        )
 
-      const updatedMessages = previousMessages?.data.messages.map((message) =>
-        message.id === messageId
-          ? { ...message, content: 'Mensaje eliminado', deleted: true }
-          : message
-      )
+      const updatedMessages = previousMessages?.pages.map((page) => ({
+        ...page,
+        messages: page.messages.map((message) =>
+          message.id === messageId
+            ? { ...message, content: 'Mensaje eliminado', deleted: true }
+            : message
+        ),
+      }))
 
-      if (updatedMessages) {
-        queryClient.setQueryData<any>(chatMessagesQueryKey, (old: any) => ({
+      queryClient.setQueryData<InfiniteData<GetChatMessagesResponse>>(
+        chatMessagesQueryKey,
+        (old: any) => ({
           ...old,
-          data: { messages: updatedMessages },
-        }))
-      }
+          pages: updatedMessages,
+        })
+      )
 
       return { previousMessages }
     },

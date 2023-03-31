@@ -1,25 +1,74 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
+import { useIsMutating } from '@tanstack/react-query'
 import { Box, Stack } from '@chakra-ui/react'
+import { AnimatePresence } from 'framer-motion'
 
-import { MessageItem } from './MessageItem'
 import { ChatTag } from './ChatTag'
+import { MessagesLog } from './MessagesLog'
 import { MessagesLoader } from './loaders/MessagesLoader'
-import { useGetChatMessages } from '../services/chat.service'
-
+import {
+  GetChatMessagesResponse,
+  useGetChatMessages,
+} from '../services/chat.service'
 import { SectionWithScroll } from '@/shared/components/SectionWithScroll'
-import { useStoreSelector } from '@/shared/app/store'
-import { DateTime } from '@/shared/helpers'
+import { MessagesNextPageLoader } from './loaders/MessagesNextPageLoader'
+
+type Messages = GetChatMessagesResponse['messages']
 
 export const Messages = () => {
   const { chatId } = useParams()
 
-  const messagesEndRef = useRef<any>(null)
+  const [prevTotalHeight, setPrevTotalHeight] = useState(0)
 
-  const { id, profilePicture } = useStoreSelector('session')
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const { data, isLoading } = useGetChatMessages(chatId!)
-  const messages = data?.data.messages
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useGetChatMessages(chatId!)
+  const messagesPages = data?.pages
+
+  const orderedMessagesPages = useMemo(() => {
+    const reverseMessagePages = [...(messagesPages || [])]
+      .reverse()
+      .map((page) => ({ ...page, messages: [...page.messages].reverse() }))
+
+    return reverseMessagePages.flatMap((page) => page.messages)
+  }, [messagesPages])
+
+  useEffect(() => {
+    const msgContainer = messagesContainerRef.current
+
+    const handleScroll = () => {
+      const howMuchUserCanScroll = msgContainer!.scrollTop
+
+      if (hasNextPage && howMuchUserCanScroll === 0) {
+        fetchNextPage()
+      }
+    }
+
+    msgContainer?.addEventListener('scroll', handleScroll)
+
+    if (!hasNextPage) {
+      msgContainer?.removeEventListener('scroll', handleScroll)
+    }
+
+    return () => {
+      msgContainer?.removeEventListener('scroll', handleScroll)
+    }
+  }, [messagesContainerRef.current, hasNextPage])
+
+  const isMutatingChatMessages = useIsMutating({
+    mutationKey: ['submit-message', chatId],
+  })
+
+  useEffect(() => {
+    const msgContainer = messagesContainerRef.current
+
+    msgContainer?.scrollTo(0, msgContainer!.scrollHeight - prevTotalHeight)
+
+    setPrevTotalHeight(msgContainer?.scrollHeight || 0)
+  }, [messagesPages?.length])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView()
@@ -27,66 +76,31 @@ export const Messages = () => {
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages])
+  }, [messagesEndRef.current, chatId])
+
+  useEffect(() => {
+    isMutatingChatMessages > 0 && scrollToBottom()
+  }, [messagesEndRef.current, isMutatingChatMessages])
 
   return (
-    <SectionWithScroll flexGrow={1} flexShrink={1} py={5} px={10} spacing={0}>
+    <SectionWithScroll
+      ref={messagesContainerRef}
+      position='relative'
+      flexGrow={1}
+      flexShrink={1}
+      py={5}
+      px={10}
+      spacing={0}
+    >
+      <AnimatePresence>
+        {isFetchingNextPage && <MessagesNextPageLoader />}
+      </AnimatePresence>
       {isLoading ? (
         <Stack spacing={5}>
           <MessagesLoader />
         </Stack>
-      ) : messages?.length ? (
-        messages?.map((message, index) => {
-          const messageSender = message.user
-
-          const isSender = messageSender.id === id
-          const isConsecutive =
-            index && messageSender.id === messages![index - 1].user.id
-
-          const messageDateTime = DateTime.createFromDate(message.createdAt)
-
-          const time = messageDateTime.formatDate({
-            timeStyle: 'short',
-          })
-
-          const sameDateThatLastMessage: boolean = Boolean(
-            index &&
-              messageDateTime.dayDiff(
-                DateTime.createFromDate(messages![index - 1].createdAt)
-              ) === 0
-          )
-
-          return (
-            <Stack
-              mt={
-                (isConsecutive && sameDateThatLastMessage) || !index
-                  ? `${1} !important`
-                  : `${4} !important`
-              }
-              key={message.id}
-            >
-              {!sameDateThatLastMessage && (
-                <ChatTag alignSelf='center' my={4}>
-                  {messageDateTime.isToday()
-                    ? 'Hoy'
-                    : messageDateTime.formatDate({ dateStyle: 'medium' })}
-                </ChatTag>
-              )}
-              <MessageItem
-                id={message.id}
-                content={message.content}
-                deleted={message.deleted}
-                sender={messageSender.username}
-                senderAvatar={
-                  isSender ? profilePicture : messageSender.profilePicture
-                }
-                time={time}
-                isSender={isSender}
-                isConsecutive={!!isConsecutive && sameDateThatLastMessage}
-              />
-            </Stack>
-          )
-        })
+      ) : orderedMessagesPages.length ? (
+        <MessagesLog messages={orderedMessagesPages} />
       ) : (
         <ChatTag alignSelf='center' textTransform='none'>
           Chat sin mensajes 😢. Que esperás para comenzar a enviarlos!!

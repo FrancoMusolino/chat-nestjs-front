@@ -36,11 +36,15 @@ export const DeleteAccount = () => {
   const { id } = useStoreSelector('session')
   const dispatch = useGlobalDispatch()
 
-  const { mutate, isLoading, error } = useDeleteAccountMutation(id)
+  const {
+    mutate: deleteAccount,
+    isLoading,
+    error,
+  } = useDeleteAccountMutation(id)
   useErrorMessage(error)
 
   const handleSubmit = (data: DeleteAccountRequest) => {
-    return mutate(data, {
+    return deleteAccount(data, {
       onSuccess: () => {
         dispatch(endSession())
         onClose()

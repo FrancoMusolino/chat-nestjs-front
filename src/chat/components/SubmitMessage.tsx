@@ -16,7 +16,7 @@ export const SubmitMessage = () => {
 
   const [content, setContent] = useState('')
 
-  const { mutate, error } = useSubmitMessageMutation(chatId!)
+  const { mutate: submitMessage, error } = useSubmitMessageMutation(chatId!)
   useErrorMessage(error)
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export const SubmitMessage = () => {
     const prevContent = content
     setContent('')
 
-    return mutate(
+    return submitMessage(
       { content },
       {
         onError: () => {
@@ -78,6 +78,7 @@ export const SubmitMessage = () => {
         alignSelf='flex-end'
         mb={`${1} !important`}
         bgColor='transparent'
+        isDisabled={!content}
       >
         <FaPaperPlane size='20px' fill={colors['text-gray']} />
       </Button>

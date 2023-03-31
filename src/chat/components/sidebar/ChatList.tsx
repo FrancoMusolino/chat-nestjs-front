@@ -19,7 +19,7 @@ export const ChatList = () => {
 
   useErrorMessage(error)
 
-  let chats = data?.data.chats
+  let chats = data?.chats
 
   if (filter) {
     chats = chats?.filter((chat) =>

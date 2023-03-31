@@ -35,7 +35,7 @@ export const Login = () => {
   const handleSubmit = (values: AuthRequest) => {
     return mutate(values, {
       onSuccess: (user) => {
-        const { id, username, token, profilePicture, status } = user.data
+        const { id, username, token, profilePicture, status } = user
         dispatch(startSession({ id, username, token, profilePicture, status }))
         return navigate('/', { replace: true })
       },

@@ -26,7 +26,7 @@ export const useRegisterMutation = () => {
   return useMutation({
     mutationKey: ['register'],
     mutationFn: (newUser: AuthRequest) =>
-      axios.post<AuthResponse>('auth/register', newUser),
+      axios.post<unknown, AuthResponse>('auth/register', newUser),
   })
 }
 
@@ -34,6 +34,6 @@ export const useLoginMutation = () => {
   return useMutation({
     mutationKey: ['login'],
     mutationFn: (user: AuthRequest) =>
-      axios.post<AuthResponse>('auth/login', user),
+      axios.post<unknown, AuthResponse>('auth/login', user),
   })
 }

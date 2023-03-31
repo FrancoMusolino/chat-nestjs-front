@@ -43,7 +43,7 @@ export const Register = () => {
   const handleSubmit = (values: AuthRequest) => {
     return mutate(values, {
       onSuccess: (newUser) => {
-        const { id, username, token, status } = newUser.data
+        const { id, username, token, status } = newUser
         dispatch(startSession({ id, username, token, status }))
         return navigate('/', { replace: true })
       },

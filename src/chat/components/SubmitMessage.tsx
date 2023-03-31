@@ -5,9 +5,11 @@ import { motion } from 'framer-motion'
 import ResizeTextarea from 'react-textarea-autosize'
 import { FaPaperPlane } from 'react-icons/fa'
 
+import { useSubmitMessageMutation } from '../services/message.service'
 import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { TextareaInputWithScroll } from '@/shared/components/TextareaInputWithScroll'
-import { useSubmitMessageMutation } from '../services/message.service'
+import { socket } from '@/shared/app/socket'
+import { SOCKET_EVENTS } from '@/shared/enums'
 
 export const SubmitMessage = () => {
   const { colors } = useBrandColors()
@@ -31,6 +33,9 @@ export const SubmitMessage = () => {
     return submitMessage(
       { content },
       {
+        onSuccess: (newMessage) => {
+          socket.emit(SOCKET_EVENTS.EVENT_SUBMIT_MESSAGE, newMessage)
+        },
         onError: () => {
           setContent(prevContent)
         },

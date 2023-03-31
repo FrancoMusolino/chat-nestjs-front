@@ -13,6 +13,8 @@ import {
 } from '../services/chat.service'
 import { SectionWithScroll } from '@/shared/components/SectionWithScroll'
 import { MessagesNextPageLoader } from './loaders/MessagesNextPageLoader'
+import { socket } from '@/shared/app/socket'
+import { SOCKET_EVENTS } from '@/shared/enums'
 
 type Messages = GetChatMessagesResponse['messages']
 
@@ -24,8 +26,14 @@ export const Messages = () => {
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useGetChatMessages(chatId!)
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+  } = useGetChatMessages(chatId!)
   const messagesPages = data?.pages
 
   const orderedMessagesPages = useMemo(() => {
@@ -35,6 +43,20 @@ export const Messages = () => {
 
     return reverseMessagePages.flatMap((page) => page.messages)
   }, [messagesPages])
+
+  useEffect(() => {
+    const onMessageReceiveEvent = (newMessage: Messages[number]) => {
+      refetch()
+
+      scrollToBottom()
+    }
+
+    socket.on(SOCKET_EVENTS.EVENT_RECEIVE_MESSAGE, onMessageReceiveEvent)
+
+    return () => {
+      socket.off(SOCKET_EVENTS.EVENT_RECEIVE_MESSAGE, onMessageReceiveEvent)
+    }
+  }, [orderedMessagesPages])
 
   useEffect(() => {
     const msgContainer = messagesContainerRef.current

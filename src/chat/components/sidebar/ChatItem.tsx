@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { HStack, Stack, Text } from '@chakra-ui/react'
 
 import { useBrandColors } from '@/shared/hooks'
 import { Avatar } from '@/shared/components/Avatar'
 import { DateTime } from '@/shared/helpers'
+import { socket } from '@/shared/app/socket'
+import { SOCKET_EVENTS } from '@/shared/enums'
 
 type ChatItemProps = {
   id: string
@@ -34,6 +36,22 @@ export const ChatItem = ({
     messageDateTime = DateTime.createFromDate(lastMessageDate!)
   }
 
+  const [focusedChat, setFocusedChat] = useState(chatId === id)
+
+  useEffect(() => {
+    if (focusedChat) {
+      socket.emit(SOCKET_EVENTS.EVENT_LEAVE, { chatId: id })
+    }
+
+    setFocusedChat(id === chatId)
+  }, [chatId])
+
+  const handleJoinChat = () => {
+    socket.emit(SOCKET_EVENTS.EVENT_JOIN, { chatId: id })
+
+    return navigate(`chat/${id}`)
+  }
+
   return (
     <HStack
       align='center'
@@ -42,7 +60,7 @@ export const ChatItem = ({
       cursor='pointer'
       bgColor={chatId === id ? colors.secondary : 'transparent'}
       _hover={{ bgColor: colors.secondary }}
-      onClick={() => navigate(`chat/${id}`)}
+      onClick={handleJoinChat}
     >
       <Avatar src={avatar || ''} isGroupPicture />
       <HStack

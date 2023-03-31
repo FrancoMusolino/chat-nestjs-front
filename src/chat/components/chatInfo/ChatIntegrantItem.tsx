@@ -9,6 +9,7 @@ import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { Avatar } from '@/shared/components/Avatar'
 import { Menu } from '@/shared/components/Menu'
 import { Alert } from '@/shared/components/Alert'
+import { DateTime } from '@/shared/helpers'
 
 type ChatIntegrantItemProps = {
   username: string
@@ -39,6 +40,16 @@ export const ChatIntegrantItem = ({
 
   const [isVisible, setIsVisible] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+
+  const renderLastConnection = (date: string): string => {
+    const dateTime = DateTime.createFromString(date)
+
+    if (dateTime.isToday()) {
+      return `hoy, ${dateTime.formatDate({ timeStyle: 'short' })}`
+    }
+
+    return dateTime.formatDate({ dateStyle: 'short', timeStyle: 'short' })
+  }
 
   return (
     <HStack justify='space-between'>
@@ -109,14 +120,14 @@ export const ChatIntegrantItem = ({
           </Badge>
         )}
         <Text
-          fontSize='xs'
-          textTransform='uppercase'
+          fontSize='11px'
+          textTransform={lastConnection ? 'none' : 'uppercase'}
           color={colors['text-gray']}
         >
           {connected
             ? 'En línea'
             : lastConnection
-            ? 'hola'
+            ? `Ult. conexión ${renderLastConnection(lastConnection)}`
             : 'Nunca se conectó'}
         </Text>
       </Stack>

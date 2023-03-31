@@ -33,13 +33,13 @@ export const Messages = () => {
       .reverse()
       .map((page) => ({ ...page, messages: [...page.messages].reverse() }))
 
-    return reverseMessagePages.map((page) => page.messages).flat()
+    return reverseMessagePages.flatMap((page) => page.messages)
   }, [messagesPages])
 
   useEffect(() => {
     const msgContainer = messagesContainerRef.current
 
-    const handleScroll = async () => {
+    const handleScroll = () => {
       const howMuchUserCanScroll = msgContainer!.scrollTop
 
       if (hasNextPage && howMuchUserCanScroll === 0) {

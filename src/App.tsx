@@ -8,7 +8,8 @@ import '@fontsource/inter/700.css'
 
 import customTheme from '@/theme'
 import { router } from '@/routes/router'
-import { useGlobalDispatch } from '@/shared/app/store'
+import { socket } from '@/shared/app/socket'
+import { useGlobalDispatch, useStoreSelector } from '@/shared/app/store'
 import { CACHE_TIME } from '@/shared/constants'
 
 const queryClient = new QueryClient({
@@ -21,11 +22,30 @@ const colorModeManager = createLocalStorageManager('color-mode')
 const setToDarkMode = colorModeManager.set('dark')
 
 function App() {
+  const { token } = useStoreSelector('session')
   const dispatch = useGlobalDispatch()
 
   useEffect(() => {
     dispatch({ type: 'REHYDRATE' })
   }, [])
+
+  useEffect(() => {
+    if (token) {
+      socket.auth = {
+        token,
+      }
+
+      socket.connect()
+    }
+
+    if (!token && socket.connected) {
+      socket.disconnect()
+    }
+
+    return () => {
+      socket.disconnect()
+    }
+  }, [token])
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -29,7 +29,7 @@ export const ProfileHeader = ({ setIsOpen }: ProfileHeaderProps) => {
         <Avatar src={profilePicture} />
         <Heading fontSize='xl'>{username}</Heading>
       </HStack>
-      <HStack>
+      <HStack spacing={0} gap={2.5}>
         <NotificationCenter />
         <Menu>
           <MenuItem onClick={() => setIsOpen(true)}>Configuración</MenuItem>

@@ -26,7 +26,7 @@ export const ChatHeader = () => {
   useErrorMessage(error)
 
   return (
-    <Header>
+    <Header spacing={0}>
       <HStack spacing={3}>
         <Avatar src={selectedChat?.avatar} isGroupPicture />
         <Heading

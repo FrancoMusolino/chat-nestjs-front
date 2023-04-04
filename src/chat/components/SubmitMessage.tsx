@@ -50,6 +50,7 @@ export const SubmitMessage = () => {
       py={2.5}
       gap={1}
       bgColor={colors.secondary}
+      zIndex={1000}
       onSubmit={handleSubmit}
     >
       <TextareaInputWithScroll

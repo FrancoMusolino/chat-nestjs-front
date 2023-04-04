@@ -57,6 +57,8 @@ export const ChatIntegrantItem = ({
         <Avatar src={profilePicture} />
         <Stack spacing={1}>
           <HStack
+            spacing={0}
+            gap={2.5}
             onMouseEnter={() => setIsVisible(true)}
             onMouseLeave={() => !isOpen && setIsVisible(false)}
           >

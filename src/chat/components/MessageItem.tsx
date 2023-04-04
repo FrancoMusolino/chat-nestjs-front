@@ -109,6 +109,7 @@ export const MessageItem = ({
                 animate={{ right: -1 }}
                 initial={{ right: -5 }}
                 justify='center'
+                spacing={0}
                 p={1}
                 pr={0}
                 bgColor={colors.primary}

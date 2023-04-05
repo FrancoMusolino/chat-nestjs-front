@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, KeyboardEvent } from 'react'
 import { useParams } from 'react-router-dom'
 import { Button, HStack } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
@@ -24,6 +24,16 @@ export const SubmitMessage = () => {
   useEffect(() => {
     setContent('')
   }, [chatId])
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    const enter = e.key === 'Enter'
+
+    if (enter && e.shiftKey) {
+      return
+    } else if (enter && content) {
+      handleSubmit(e)
+    }
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLDivElement>) => {
     e.preventDefault()
@@ -74,6 +84,7 @@ export const SubmitMessage = () => {
           bgColor: colors.background,
         }}
         onChange={(e) => setContent(e.target.value)}
+        onKeyDown={(e) => handleKeyDown(e)}
       />
       <Button
         as={motion.button}

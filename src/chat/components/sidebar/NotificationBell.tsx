@@ -19,7 +19,8 @@ export const NotificationBell = ({ unseenCount }: NotificationBellProps) => {
         pos='absolute'
         bottom={-1}
         right={-1.5}
-        w='15px'
+        minW='15px'
+        maxW='min-content'
         textAlign='center'
         fontSize='2xs'
         bgColor={colors.danger}

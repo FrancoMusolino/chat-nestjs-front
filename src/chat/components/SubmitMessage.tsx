@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, KeyboardEvent } from 'react'
 import { useParams } from 'react-router-dom'
 import { Button, HStack } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import ResizeTextarea from 'react-textarea-autosize'
 import { FaPaperPlane } from 'react-icons/fa'
 
+import { useSubmitMessageMutation } from '../services/message.service'
 import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { TextareaInputWithScroll } from '@/shared/components/TextareaInputWithScroll'
-import { useSubmitMessageMutation } from '../services/message.service'
+import { socket } from '@/shared/app/socket'
+import { SOCKET_EVENTS } from '@/shared/enums'
 
 export const SubmitMessage = () => {
   const { colors } = useBrandColors()
@@ -23,6 +25,16 @@ export const SubmitMessage = () => {
     setContent('')
   }, [chatId])
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    const enter = e.key === 'Enter'
+
+    if (enter && e.shiftKey) {
+      return
+    } else if (enter && content) {
+      handleSubmit(e)
+    }
+  }
+
   const handleSubmit = (e: React.FormEvent<HTMLDivElement>) => {
     e.preventDefault()
     const prevContent = content
@@ -31,6 +43,9 @@ export const SubmitMessage = () => {
     return submitMessage(
       { content },
       {
+        onSuccess: (newMessage) => {
+          socket.emit(SOCKET_EVENTS.EVENT_SUBMIT_MESSAGE, newMessage)
+        },
         onError: () => {
           setContent(prevContent)
         },
@@ -45,6 +60,7 @@ export const SubmitMessage = () => {
       py={2.5}
       gap={1}
       bgColor={colors.secondary}
+      zIndex={1000}
       onSubmit={handleSubmit}
     >
       <TextareaInputWithScroll
@@ -68,6 +84,7 @@ export const SubmitMessage = () => {
           bgColor: colors.background,
         }}
         onChange={(e) => setContent(e.target.value)}
+        onKeyDown={(e) => handleKeyDown(e)}
       />
       <Button
         as={motion.button}

@@ -1,32 +1,70 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useIsMutating } from '@tanstack/react-query'
-import { Box, Stack } from '@chakra-ui/react'
+import { Box, Stack, Text } from '@chakra-ui/react'
 import { AnimatePresence } from 'framer-motion'
 
 import { ChatTag } from './ChatTag'
 import { MessagesLog } from './MessagesLog'
+import { ScrollToBottomButton } from './ScrollToBottomButton'
 import { MessagesLoader } from './loaders/MessagesLoader'
+import { MessagesNextPageLoader } from './loaders/MessagesNextPageLoader'
 import {
   GetChatMessagesResponse,
   useGetChatMessages,
 } from '../services/chat.service'
+import { useSubscribeMessageRecievedEvent } from '../hooks/useSubscribeMessageRecievedEvent'
 import { SectionWithScroll } from '@/shared/components/SectionWithScroll'
-import { MessagesNextPageLoader } from './loaders/MessagesNextPageLoader'
+import { useBrandColors } from '@/shared/hooks'
+import { throttle } from '@/shared/utils'
 
-type Messages = GetChatMessagesResponse['messages']
+export type Messages = GetChatMessagesResponse['messages']
 
 export const Messages = () => {
+  const { colors } = useBrandColors()
   const { chatId } = useParams()
 
-  const [prevTotalHeight, setPrevTotalHeight] = useState(0)
+  const [totalHeight, setTotalHeight] = useState({
+    prev: 0,
+    current: 0,
+  })
+  const [scrollToBottomIsVisible, setScrollToBottomIsVisible] = useState(false)
+
+  useEffect(() => {
+    if (!scrollToBottomIsVisible) {
+      setMessagesReceived(0)
+    }
+  }, [scrollToBottomIsVisible])
 
   const messagesContainerRef = useRef<HTMLDivElement>(null)
+
+  const getMsgContainerScrollHeight = () =>
+    messagesContainerRef.current?.scrollHeight as number
+
+  const getMsgContainerOffsetHeight = () =>
+    messagesContainerRef.current?.offsetHeight as number
+
+  const getMsgContainerScrollTop = () =>
+    messagesContainerRef.current?.scrollTop as number
+
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const scrollToBottom = (smooth?: boolean) => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: smooth ? 'smooth' : 'auto',
+    })
+  }
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useGetChatMessages(chatId!)
   const messagesPages = data?.pages
+
+  useEffect(() => {
+    setTotalHeight((prevState) => ({
+      prev: prevState.current,
+      current: getMsgContainerScrollHeight(),
+    }))
+  }, [data])
 
   const orderedMessagesPages = useMemo(() => {
     const reverseMessagePages = [...(messagesPages || [])]
@@ -39,47 +77,53 @@ export const Messages = () => {
   useEffect(() => {
     const msgContainer = messagesContainerRef.current
 
-    const handleScroll = () => {
-      const howMuchUserCanScroll = msgContainer!.scrollTop
+    msgContainer?.scrollTo(0, msgContainer!.scrollHeight - totalHeight.current)
+  }, [messagesPages?.length])
 
-      if (hasNextPage && howMuchUserCanScroll === 0) {
-        fetchNextPage()
+  const { messagesReceived, setMessagesReceived } =
+    useSubscribeMessageRecievedEvent(chatId!)
+
+  useEffect(() => {
+    if (messagesReceived) {
+      const scrollTop = getMsgContainerScrollTop()
+      const offsetHeight = getMsgContainerOffsetHeight()
+
+      if (scrollTop + offsetHeight > totalHeight.prev - offsetHeight) {
+        scrollToBottom()
+        setMessagesReceived(0)
+
+        return
       }
+
+      setScrollToBottomIsVisible(true)
+    }
+  }, [messagesReceived])
+
+  const handleScroll = () => {
+    const offsetHeight = getMsgContainerOffsetHeight()
+    const howMuchUserCanScroll = getMsgContainerScrollTop()
+
+    if (howMuchUserCanScroll + offsetHeight == totalHeight.current) {
+      setScrollToBottomIsVisible(false)
     }
 
-    msgContainer?.addEventListener('scroll', handleScroll)
-
-    if (!hasNextPage) {
-      msgContainer?.removeEventListener('scroll', handleScroll)
+    if (hasNextPage && howMuchUserCanScroll === 0) {
+      fetchNextPage()
     }
-
-    return () => {
-      msgContainer?.removeEventListener('scroll', handleScroll)
-    }
-  }, [messagesContainerRef.current, hasNextPage])
+  }
 
   const isMutatingChatMessages = useIsMutating({
     mutationKey: ['submit-message', chatId],
   })
 
   useEffect(() => {
-    const msgContainer = messagesContainerRef.current
-
-    msgContainer?.scrollTo(0, msgContainer!.scrollHeight - prevTotalHeight)
-
-    setPrevTotalHeight(msgContainer?.scrollHeight || 0)
-  }, [messagesPages?.length])
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView()
-  }
-
-  useEffect(() => {
     scrollToBottom()
   }, [messagesEndRef.current, chatId])
 
   useEffect(() => {
-    isMutatingChatMessages > 0 && scrollToBottom()
+    if (isMutatingChatMessages > 0) {
+      scrollToBottom()
+    }
   }, [messagesEndRef.current, isMutatingChatMessages])
 
   return (
@@ -91,6 +135,7 @@ export const Messages = () => {
       py={5}
       px={10}
       spacing={0}
+      onScroll={throttle(handleScroll, 400)}
     >
       <AnimatePresence>
         {isFetchingNextPage && <MessagesNextPageLoader />}
@@ -106,6 +151,33 @@ export const Messages = () => {
           Chat sin mensajes 😢. Que esperás para comenzar a enviarlos!!
         </ChatTag>
       )}
+
+      <AnimatePresence>
+        {scrollToBottomIsVisible && (
+          <ScrollToBottomButton
+            onClick={() => {
+              setScrollToBottomIsVisible(false)
+              scrollToBottom()
+            }}
+          >
+            <Stack
+              position='absolute'
+              top={-2.5}
+              right={-1.5}
+              w='20px'
+              h='20px'
+              align='center'
+              justify='center'
+              bgColor={colors.primary}
+              borderRadius='full'
+            >
+              <Text as='span' fontSize='13px'>
+                {messagesReceived}
+              </Text>
+            </Stack>
+          </ScrollToBottomButton>
+        )}
+      </AnimatePresence>
 
       <Box ref={messagesEndRef} mt={`${0} !important`} />
     </SectionWithScroll>

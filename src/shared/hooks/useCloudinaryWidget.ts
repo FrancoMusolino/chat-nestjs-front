@@ -2,9 +2,6 @@ import { useEffect } from 'react'
 
 import { CLOUDINARY_WIDGET_DEFAULT_OPTIONS } from '../constants'
 
-let cloudinary: any
-let widget: any
-
 type UseCloudinaryWidgetProps = {
   opts?: Record<string, any>
   successFn: (secureUrl: string) => void
@@ -14,6 +11,9 @@ export const useCloudinaryWidget = ({
   successFn,
   opts,
 }: UseCloudinaryWidgetProps) => {
+  let cloudinary: any
+  let widget: any
+
   useEffect(() => {
     if (!cloudinary) {
       cloudinary = (window as any).cloudinary
@@ -36,7 +36,7 @@ export const useCloudinaryWidget = ({
         ? cancelIdleCallback(idleCallback as number)
         : clearTimeout(idleCallback)
     }
-  }, [])
+  }, [opts, successFn])
 
   const createWidget = () => {
     const options = {

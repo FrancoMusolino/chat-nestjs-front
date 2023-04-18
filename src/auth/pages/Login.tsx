@@ -37,7 +37,6 @@ export const Login = () => {
       onSuccess: (user) => {
         const { id, username, token, profilePicture, status } = user
         dispatch(startSession({ id, username, token, profilePicture, status }))
-        return navigate('/', { replace: true })
       },
     })
   }

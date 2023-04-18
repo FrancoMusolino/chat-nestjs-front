@@ -1,19 +1,20 @@
 import React from 'react'
 import { Stack } from '@chakra-ui/react'
 
-import { ChatTag } from './ChatTag'
 import { MessageItem } from './MessageItem'
 import { DateTime } from '@/shared/helpers'
 import { useStoreSelector } from '@/shared/app/store'
 import { GetChatMessagesResponse } from '../services/chat.service'
 
-type MessagePageProps = { messages: GetChatMessagesResponse['messages'] }
+type MessagePageProps = {
+  messages: GetChatMessagesResponse['messages']
+}
 
 export const MessagesLog = ({ messages }: MessagePageProps) => {
   const { id, profilePicture } = useStoreSelector('session')
 
   return (
-    <>
+    <Stack spacing={4}>
       {messages?.map((message, index) => {
         const messageSender = message.user
 
@@ -23,10 +24,6 @@ export const MessagesLog = ({ messages }: MessagePageProps) => {
 
         const messageDateTime = DateTime.createFromDate(message.createdAt)
 
-        const time = messageDateTime.formatDate({
-          timeStyle: 'short',
-        })
-
         const sameDateThatLastMessage: boolean = Boolean(
           index &&
             messageDateTime.dayDiff(
@@ -35,36 +32,22 @@ export const MessagesLog = ({ messages }: MessagePageProps) => {
         )
 
         return (
-          <Stack
-            mt={
-              (isConsecutive && sameDateThatLastMessage) || !index
-                ? `${1} !important`
-                : `${4} !important`
-            }
+          <MessageItem
             key={message.id}
-          >
-            {!sameDateThatLastMessage && (
-              <ChatTag alignSelf='center' my={4}>
-                {messageDateTime.isToday()
-                  ? 'Hoy'
-                  : messageDateTime.formatDate({ dateStyle: 'medium' })}
-              </ChatTag>
-            )}
-            <MessageItem
-              id={message.id}
-              content={message.content}
-              deleted={message.deleted}
-              sender={messageSender.username}
-              senderAvatar={
-                isSender ? profilePicture : messageSender.profilePicture
-              }
-              time={time}
-              isSender={isSender}
-              isConsecutive={!!isConsecutive && sameDateThatLastMessage}
-            />
-          </Stack>
+            id={message.id}
+            content={message.content}
+            deleted={message.deleted}
+            sender={messageSender.username}
+            senderAvatar={
+              isSender ? profilePicture : messageSender.profilePicture
+            }
+            dateTime={messageDateTime}
+            isSender={isSender}
+            isConsecutive={!!isConsecutive && sameDateThatLastMessage}
+            sameDateThatLastMessage={sameDateThatLastMessage}
+          />
         )
       })}
-    </>
+    </Stack>
   )
 }

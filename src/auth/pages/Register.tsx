@@ -45,7 +45,6 @@ export const Register = () => {
       onSuccess: (newUser) => {
         const { id, username, token, status } = newUser
         dispatch(startSession({ id, username, token, status }))
-        return navigate('/', { replace: true })
       },
     })
   }

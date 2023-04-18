@@ -60,8 +60,8 @@ function App() {
           defaultOptions: {
             position: 'top-right',
             isClosable: true,
-            duration: 2500,
-            variant: 'subtle',
+            duration: 2000,
+            variant: 'solid',
           },
         }}
       >

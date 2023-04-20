@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { EditablePicture } from '../EditablePicture'
 
@@ -7,26 +7,32 @@ import { updateSession } from '@/shared/features/session/session.actions'
 import { useUpdateUserMutation } from '@/shared/services/user.service'
 import { useErrorMessage, useCloudinaryWidget } from '@/shared/hooks'
 
+const opts = {
+  uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET_USERS,
+}
+
 export const ChangeProfilePicture = () => {
+  const [isLoading, setIsLoading] = useState(false)
+
   const { id, profilePicture } = useStoreSelector('session')
   const dispatch = useGlobalDispatch()
 
-  const { mutate: updateProfile, error, isLoading } = useUpdateUserMutation(id)
+  const { mutateAsync: updateProfile, error } = useUpdateUserMutation(id)
   useErrorMessage(error)
 
   const { open } = useCloudinaryWidget({
-    opts: {
-      uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET_USERS,
+    opts,
+    successFn: async (secureUrl) => {
+      setIsLoading(true)
+
+      const res = await updateProfile({ profilePicture: secureUrl })
+
+      if (!('error' in res)) {
+        dispatch(updateSession({ profilePicture: res.profilePicture }))
+      }
+
+      setIsLoading(false)
     },
-    successFn: (secureUrl) =>
-      updateProfile(
-        { profilePicture: secureUrl },
-        {
-          onSuccess: () => {
-            dispatch(updateSession({ profilePicture: secureUrl }))
-          },
-        }
-      ),
   })
 
   return (

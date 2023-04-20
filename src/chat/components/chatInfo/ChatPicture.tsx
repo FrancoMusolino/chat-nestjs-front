@@ -6,6 +6,10 @@ import { useSelectedChat } from '@/chat/hooks/useSelectedChat'
 import { useCloudinaryWidget, useErrorMessage } from '@/shared/hooks'
 import { useUpdateChatMutation } from '@/chat/services/chat.service'
 
+const opts = {
+  uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET_CHATS,
+}
+
 export const ChatPicture = () => {
   const { chatId } = useParams()
 
@@ -19,9 +23,7 @@ export const ChatPicture = () => {
   useErrorMessage(error)
 
   const { open } = useCloudinaryWidget({
-    opts: {
-      uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET_CHATS,
-    },
+    opts,
     successFn: (secureUrl) => updateChat({ avatar: secureUrl }),
   })
 

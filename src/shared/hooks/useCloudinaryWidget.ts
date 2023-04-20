@@ -2,41 +2,42 @@ import { useEffect } from 'react'
 
 import { CLOUDINARY_WIDGET_DEFAULT_OPTIONS } from '../constants'
 
+let cloudinary: any
+
 type UseCloudinaryWidgetProps = {
-  opts?: Record<string, any>
+  opts: { uploadPreset: string } & Record<string, any>
   successFn: (secureUrl: string) => void
 }
+
+type WidgetInUse = { uploadPreset: string; widget: any }
+
+const widgetsInUse: WidgetInUse[] = []
 
 export const useCloudinaryWidget = ({
   successFn,
   opts,
 }: UseCloudinaryWidgetProps) => {
-  let cloudinary: any
-  let widget: any
-
   useEffect(() => {
     if (!cloudinary) {
       cloudinary = (window as any).cloudinary
     }
 
-    const onIdle = () => {
-      if (!widget) {
-        widget = createWidget()
+    if (!existWidget()) {
+      let newWidget: WidgetInUse = {
+        uploadPreset: opts.uploadPreset,
+        widget: null,
+      }
+
+      newWidget.widget = createWidget()
+
+      return () => {
+        widgetsInUse.push(newWidget)
       }
     }
+  }, [opts])
 
-    const canIUseRIC = 'requestIdleCallback' in window
-
-    const idleCallback = canIUseRIC
-      ? requestIdleCallback(onIdle)
-      : setTimeout(onIdle, 1)
-
-    return () => {
-      canIUseRIC
-        ? cancelIdleCallback(idleCallback as number)
-        : clearTimeout(idleCallback)
-    }
-  }, [opts, successFn])
+  const existWidget = () =>
+    widgetsInUse.find((widget) => widget.uploadPreset === opts?.uploadPreset)
 
   const createWidget = () => {
     const options = {
@@ -52,8 +53,13 @@ export const useCloudinaryWidget = ({
   }
 
   const open = () => {
-    if (!widget) {
+    let widget
+    const exists = existWidget()
+
+    if (!exists) {
       widget = createWidget()
+    } else {
+      widget = exists.widget
     }
 
     widget && widget.open()

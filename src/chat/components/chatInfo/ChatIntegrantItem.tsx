@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Badge, HStack, MenuItem, Stack, Text } from '@chakra-ui/react'
-import { BsChevronDown } from 'react-icons/bs'
+import { Badge, HStack, Stack, Text } from '@chakra-ui/react'
 
 import { useSelectedChat } from '../../hooks/useSelectedChat'
 import { usePushOutIntegrantMutation } from '../../services/chat.service'
 import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { Avatar } from '@/shared/components/Avatar'
-import { Menu } from '@/shared/components/Menu'
 import { Alert } from '@/shared/components/Alert'
 import { DateTime } from '@/shared/helpers'
+import { Button } from '@/shared/components/Button'
 
 type ChatIntegrantItemProps = {
   username: string
@@ -65,37 +64,8 @@ export const ChatIntegrantItem = ({
             <Text fontSize='lg' lineHeight={1}>
               {username}
             </Text>
-            {showMenu && isVisible && (
-              <Menu
-                menuProps={{
-                  computePositionOnMount: true,
-                  closeOnSelect: false,
-                  strategy: 'fixed',
-                }}
-                icon={BsChevronDown}
-                menuButtonStyle={{
-                  minW: 'min-content',
-                  h: 'auto',
-                  _active: {
-                    bgColor: 'initial',
-                  },
-                  onClick: () => setIsOpen(!isOpen),
-                }}
-              >
-                <Alert
-                  trigger={MenuItem}
-                  triggerText='Expulsar del Grupo'
-                  alertTitle={`¿Deseas expulsar a “${username}” del grupo “${selectedChat?.title}”?`}
-                  btnText='Expulsar'
-                  action={() => pushOut({ username })}
-                  onCloseComplete={() => {
-                    setIsVisible(false)
-                    setIsOpen(false)
-                  }}
-                />
-              </Menu>
-            )}
           </HStack>
+
           <Text
             maxW='130px'
             fontSize='xs'
@@ -120,6 +90,24 @@ export const ChatIntegrantItem = ({
           >
             Creador del grupo
           </Badge>
+        )}
+        {showMenu && (
+          <Alert
+            trigger={Button}
+            triggerText='Expulsar'
+            triggerProps={{
+              h: 5,
+              fontSize: 'xs',
+              borderRadius: 5,
+            }}
+            alertTitle={`¿Deseas expulsar a “${username}” del grupo “${selectedChat?.title}”?`}
+            btnText='Expulsar del grupo'
+            action={() => pushOut({ username })}
+            onCloseComplete={() => {
+              setIsVisible(false)
+              setIsOpen(false)
+            }}
+          />
         )}
         <Text
           fontSize='11px'

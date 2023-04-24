@@ -8,6 +8,7 @@ import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { SectionWithScroll } from '@/shared/components/SectionWithScroll'
 import { useGetUserChats } from '@/shared/services/user.service'
 import { useStoreSelector } from '@/shared/app/store'
+import { useSubscribeNewLastMessageRecievedEvent } from '@/chat/hooks/useSubscribeNewLastMessage'
 
 export const ChatList = () => {
   const { colors } = useBrandColors()
@@ -16,8 +17,9 @@ export const ChatList = () => {
   const { filter } = useStoreSelector('chat')
 
   const { data, error, isLoading } = useGetUserChats(id)
-
   useErrorMessage(error)
+
+  useSubscribeNewLastMessageRecievedEvent()
 
   let chats = data?.chats
 

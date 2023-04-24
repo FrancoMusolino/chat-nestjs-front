@@ -3,13 +3,14 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query'
-import { AxiosResponse } from 'axios'
 
 import { axios } from '@/shared/services/axios'
 import { GetChatMessagesResponse } from './chat.service'
 import { useStoreSelector } from '@/shared/app/store'
 import { randomKeyGenerator } from '@/shared/utils'
 import { DateTime } from '@/shared/helpers'
+import { GetUserChatsResponse } from '@/shared/services/user.service'
+import { sortChats } from '../utils'
 
 type Message = {
   id: string
@@ -30,6 +31,7 @@ export const useSubmitMessageMutation = (chatId: string) => {
   const { id, username, profilePicture } = useStoreSelector('session')
 
   const chatMessagesQueryKey = ['chat-messages', chatId]
+  const userChatsQueryKey = ['user-chats']
 
   return useMutation({
     mutationKey: ['submit-message', chatId],
@@ -37,16 +39,21 @@ export const useSubmitMessageMutation = (chatId: string) => {
       axios.post<unknown, Message>(`chat/${chatId}/enviar-mensaje`, newMessage),
     onMutate: async (newMessageReq) => {
       await queryClient.cancelQueries({ queryKey: chatMessagesQueryKey })
+      await queryClient.cancelQueries({ queryKey: userChatsQueryKey })
 
       const previousMessages =
         queryClient.getQueryData<InfiniteData<GetChatMessagesResponse>>(
           chatMessagesQueryKey
         )
 
+      const { content } = newMessageReq
+
+      const now = DateTime.now().date
+
       const newMessage = {
         id: randomKeyGenerator(),
-        content: newMessageReq.content,
-        createdAt: DateTime.now().date,
+        content,
+        createdAt: now,
         deleted: false,
         user: {
           id,
@@ -65,15 +72,37 @@ export const useSubmitMessageMutation = (chatId: string) => {
         })
       )
 
-      return { previousMessages }
+      const previousUserChats =
+        queryClient.getQueryData<GetUserChatsResponse>(userChatsQueryKey)
+
+      const updatedChatsWithLastMessages = previousUserChats?.chats.map(
+        (chat) =>
+          chat.id === chatId
+            ? {
+                ...chat,
+                messages: [{ content, createdAt: now, user: { username } }],
+              }
+            : chat
+      )
+
+      sortChats({ chats: updatedChatsWithLastMessages ?? [] })
+
+      queryClient.setQueryData<GetUserChatsResponse>(
+        userChatsQueryKey,
+        (old: any) => ({
+          ...old,
+          chats: updatedChatsWithLastMessages,
+        })
+      )
+
+      return { previousMessages, previousUserChats }
     },
     onError: (_err, _, context) => {
       queryClient.setQueryData(chatMessagesQueryKey, context?.previousMessages)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-chats'] })
+      queryClient.setQueryData(userChatsQueryKey, context?.previousUserChats)
     },
     onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: userChatsQueryKey })
       queryClient.invalidateQueries({ queryKey: chatMessagesQueryKey })
     },
   })

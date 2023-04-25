@@ -47,7 +47,7 @@ export const ChatIntegrants = () => {
               <ChatIntegrantItem
                 key={user.id}
                 isCreator={user.username === chatCreator}
-                showMenu={stateUser.username === chatCreator}
+                showPushOutButton={stateUser.username === chatCreator}
                 {...user}
               />
             )

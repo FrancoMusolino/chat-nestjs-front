@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 import { Badge, HStack, Stack, Text } from '@chakra-ui/react'
 
@@ -17,7 +17,7 @@ type ChatIntegrantItemProps = {
   connected: boolean
   lastConnection?: string
   isCreator: boolean
-  showMenu?: boolean
+  showPushOutButton?: boolean
 }
 
 export const ChatIntegrantItem = ({
@@ -27,7 +27,7 @@ export const ChatIntegrantItem = ({
   connected,
   lastConnection,
   isCreator,
-  showMenu = false,
+  showPushOutButton = false,
 }: ChatIntegrantItemProps) => {
   const { colors } = useBrandColors()
 
@@ -36,9 +36,6 @@ export const ChatIntegrantItem = ({
 
   const { mutate: pushOut, error } = usePushOutIntegrantMutation(chatId!)
   useErrorMessage(error)
-
-  const [isVisible, setIsVisible] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
 
   const renderLastConnection = (date: string): string => {
     const dateTime = DateTime.createFromString(date)
@@ -55,12 +52,7 @@ export const ChatIntegrantItem = ({
       <HStack spacing={3}>
         <Avatar src={profilePicture} />
         <Stack spacing={1}>
-          <HStack
-            spacing={0}
-            gap={2.5}
-            onMouseEnter={() => setIsVisible(true)}
-            onMouseLeave={() => !isOpen && setIsVisible(false)}
-          >
+          <HStack spacing={0} gap={2.5}>
             <Text fontSize='lg' lineHeight={1}>
               {username}
             </Text>
@@ -91,7 +83,7 @@ export const ChatIntegrantItem = ({
             Creador del grupo
           </Badge>
         )}
-        {showMenu && (
+        {showPushOutButton && (
           <Alert
             trigger={Button}
             triggerText='Expulsar'
@@ -103,10 +95,6 @@ export const ChatIntegrantItem = ({
             alertTitle={`¿Deseas expulsar a “${username}” del grupo “${selectedChat?.title}”?`}
             btnText='Expulsar del grupo'
             action={() => pushOut({ username })}
-            onCloseComplete={() => {
-              setIsVisible(false)
-              setIsOpen(false)
-            }}
           />
         )}
         <Text

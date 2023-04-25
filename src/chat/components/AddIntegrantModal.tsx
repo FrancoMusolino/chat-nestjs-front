@@ -19,6 +19,8 @@ import {
 } from '../services/chat.service'
 import { Button } from '@/shared/components/Button'
 import { useBrandColors, useErrorMessage } from '@/shared/hooks'
+import { socket } from '@/shared/app/socket'
+import { SOCKET_EVENTS } from '@/shared/enums'
 
 const initialValues: AddIntegrantRequest = {
   username: '',
@@ -46,11 +48,19 @@ export const AddIntegrantModal = () => {
   const handleSubmit = (newIntegrant: AddIntegrantRequest) => {
     return addIntegrant(newIntegrant, {
       onSuccess: () => {
-        onClose()
+        const { username } = newIntegrant
+
+        socket.emit(SOCKET_EVENTS.EVENT_ADD_INTEGRANT, {
+          username,
+          chatId,
+        })
+
         toast({
           status: 'success',
-          title: `Usuario ${newIntegrant.username} agregado al chat`,
+          title: `Usuario ${username} agregado al chat`,
         })
+
+        onClose()
       },
     })
   }

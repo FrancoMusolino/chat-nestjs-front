@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom'
 
 import { axios } from '@/shared/services/axios'
 import type { GetUserChatsResponse } from '@/shared/services/user.service'
+import { socket } from '@/shared/app/socket'
+import { SOCKET_EVENTS } from '@/shared/enums'
 
 type Chat = {
   id: string
@@ -201,6 +203,12 @@ export const usePushOutIntegrantMutation = (chatId: string) => {
         chatIntegrantsQueryKey,
         context?.previousChatIntegrants
       )
+    },
+    onSuccess: (_, { username }) => {
+      socket.emit(SOCKET_EVENTS.EVENT_PUSH_OUT_INTEGRANT, {
+        username,
+        chatId,
+      })
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: chatIntegrantsQueryKey })

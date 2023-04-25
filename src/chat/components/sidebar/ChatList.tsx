@@ -8,7 +8,11 @@ import { useBrandColors, useErrorMessage } from '@/shared/hooks'
 import { SectionWithScroll } from '@/shared/components/SectionWithScroll'
 import { useGetUserChats } from '@/shared/services/user.service'
 import { useStoreSelector } from '@/shared/app/store'
-import { useSubscribeNewLastMessageRecievedEvent } from '@/chat/hooks/useSubscribeNewLastMessage'
+import {
+  useSubscribeAddedToChatEvent,
+  useSubscribePushedOutChatEvent,
+  useSubscribeNewLastMessageRecievedEvent,
+} from '@/chat/hooks'
 
 export const ChatList = () => {
   const { colors } = useBrandColors()
@@ -20,6 +24,8 @@ export const ChatList = () => {
   useErrorMessage(error)
 
   useSubscribeNewLastMessageRecievedEvent()
+  useSubscribeAddedToChatEvent()
+  useSubscribePushedOutChatEvent()
 
   let chats = data?.chats
 
